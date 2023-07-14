@@ -341,6 +341,7 @@
     <Compile Include="content\test\npcs\fields\f_siauliai_west.cs" />
     <Compile Include="other\character_adv.cs" />
     <Compile Include="other\character_init.cs" />
+    <Compile Include="recipes\recipe_crafting.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="core\client\api\002_util.lua" />
