@@ -201,6 +201,7 @@
     <Compile Include="World\Actors\CombatEntities\Components\CombatComponent.cs" />
     <Compile Include="World\Actors\CombatEntities\Components\CombatEntityComponent.cs" />
     <Compile Include="World\Actors\CombatEntities\Components\CooldownComponent.cs" />
+    <Compile Include="World\Actors\CombatEntities\Components\TimedEventComponent.cs" />
     <Compile Include="World\Actors\Monsters\MonsterInName.cs" />
     <Compile Include="World\Actors\Monsters\Npc.cs" />
     <Compile Include="World\Actors\Monsters\WarpMonster.cs" />

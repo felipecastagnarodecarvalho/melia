@@ -95,6 +95,19 @@
 		/// Opens the TP shop UI Help
 		/// </summary>
 		public const string TP_SHOP_UI_OPEN = "TP_SHOP_UI_OPEN";
+
+		/// <summary>
+		/// Start crafting an item.
+		/// </summary>
+		public const string JOURNAL_DETAIL_CRAFT_EXEC_START = "JOURNAL_DETAIL_CRAFT_EXEC_START";
+		/// <summary>
+		/// Successfully crafted an item.
+		/// </summary>
+		public const string JOURNAL_DETAIL_CRAFT_EXEC_SUCCESS = "JOURNAL_DETAIL_CRAFT_EXEC_SUCCESS";
+		/// <summary>
+		/// Failed to craft an item.
+		/// </summary>
+		public const string JOURNAL_DETAIL_CRAFT_EXEC_FAIL = "JOURNAL_DETAIL_CRAFT_EXEC_FAIL";
 	}
 
 	public static class SystemMessage

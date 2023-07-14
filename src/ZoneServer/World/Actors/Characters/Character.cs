@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Linq;
-using Melia.Shared.Data.Database;
 using Melia.Shared.L10N;
 using Melia.Shared.Network.Helpers;
 using Melia.Shared.ObjectProperties;
 using Melia.Shared.Scripting;
 using Melia.Shared.Tos.Const;
+using Melia.Shared.Tos.Properties;
 using Melia.Shared.World;
 using Melia.Zone.Network;
 using Melia.Zone.Scripting.Dialogues;
-using Melia.Zone.Skills;
 using Melia.Zone.World.Actors.Characters.Components;
 using Melia.Zone.World.Actors.CombatEntities.Components;
+using Melia.Zone.World.Actors.Components;
 using Melia.Zone.World.Actors.Monsters;
 using Yggdrasil.Composition;
 using Yggdrasil.Logging;
@@ -294,6 +294,11 @@ namespace Melia.Zone.World.Actors.Characters
 		public QuestComponent Quests { get; }
 
 		/// <summary>
+		/// Character's timed events.
+		/// </summary>
+		public TimedEventComponent TimedEvents { get; }
+
+		/// <summary>
 		/// Character's properties.
 		/// </summary>
 		/// <remarks>
@@ -337,6 +342,7 @@ namespace Melia.Zone.World.Actors.Characters
 			this.Components.Add(new CombatComponent(this));
 			this.Components.Add(new CooldownComponent(this));
 			this.Components.Add(this.Quests = new QuestComponent(this));
+			this.Components.Add(this.TimedEvents = new TimedEventComponent(this));
 
 			this.Properties = new CharacterProperties(this);
 
@@ -359,6 +365,28 @@ namespace Melia.Zone.World.Actors.Characters
 			//   aformentioned tooltip anymore right now, even if this
 			//   object is missing.
 			//this.SessionObjects.Add(new SessionObject(SessionObjectId.Jansori));
+		}
+
+		/// <summary>
+		/// Add an item to the inventory.
+		/// </summary>
+		/// <param name="itemClassName"></param>
+		/// <param name="amount"></param>
+		public void AddItem(string itemClassName, int amount = 1)
+		{
+			var item = ZoneServer.Instance.Data.ItemDb.FindByClass(itemClassName);
+			if (item != null)
+				this.AddItem(item.Id, amount);
+		}
+
+		/// <summary>
+		/// Add an item to the inventory.
+		/// </summary>
+		/// <param name="itemId"></param>
+		/// <param name="amount"></param>
+		public void AddItem(int itemId, int amount = 1)
+		{
+			this.Inventory.Add(itemId, amount);
 		}
 
 		/// <summary>
@@ -1334,6 +1362,17 @@ namespace Melia.Zone.World.Actors.Characters
 		{
 			var stamina = (this.Properties.Stamina -= staminaUsage);
 			Send.ZC_STAMINA(this, stamina);
+		}
+
+		/// <summary>
+		/// Sends an addon message
+		/// </summary>
+		/// <param name="function"></param>
+		/// <param name="stringParameter"></param>
+		/// <param name="intParameter"></param>
+		public void AddonMessage(string function, string stringParameter = null, int intParameter = 0)
+		{
+			Send.ZC_ADDON_MSG(this, function, intParameter, stringParameter);
 		}
 	}
 }

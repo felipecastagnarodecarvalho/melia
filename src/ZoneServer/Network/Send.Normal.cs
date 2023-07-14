@@ -1002,6 +1002,46 @@ namespace Melia.Zone.Network
 
 				entity.Map.Broadcast(packet, entity);
 			}
+
+			/// <summary>
+			/// Timed Action (Worship, Talk)
+			/// </summary>
+			/// <param name="character"></param>
+			/// <param name="dialog"></param>
+			/// <param name="type"></param>
+			/// <param name="duration"></param>
+			/// <param name="isOn"></param>
+			/// <param name="buttonText"></param>
+			public static void TimeAction(Character character, string dialog, string type, float duration, bool isOn = true, string buttonText = "None")
+			{
+				var packet = new Packet(Op.ZC_NORMAL);
+				packet.PutInt(NormalOp.Zone.TimeAction);
+
+				packet.PutInt(character.Handle);
+				packet.PutLpString(dialog);
+				packet.PutLpString(type);
+				packet.PutFloat(duration);
+				packet.PutByte(isOn);
+				packet.PutLpString(buttonText);
+
+				character.Connection.Send(packet);
+			}
+
+			/// <summary>
+			/// Timed Action State (Worship, Talk)
+			/// </summary>
+			/// <param name="actor"></param>
+			/// <param name="isCompleted"></param>
+			public static void TimeActionState(IActor actor, bool isCompleted)
+			{
+				var packet = new Packet(Op.ZC_NORMAL);
+				packet.PutInt(NormalOp.Zone.TimeActionState);
+
+				packet.PutInt(actor.Handle);
+				packet.PutByte(isCompleted);
+
+				actor.Map.Broadcast(packet, actor);
+			}
 		}
 	}
 }

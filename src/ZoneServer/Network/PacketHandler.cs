@@ -2226,6 +2226,8 @@ namespace Melia.Zone.Network
 		[PacketHandler(Op.CZ_STOP_TIMEACTION)]
 		public void CZ_STOP_TIMEACTION(IZoneConnection conn, Packet packet)
 		{
+			var character = conn.SelectedCharacter;
+			character.TimedEvents.Get("timeaction")?.Cancel();
 		}
 
 		/// <summary>

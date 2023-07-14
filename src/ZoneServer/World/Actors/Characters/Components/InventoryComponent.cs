@@ -526,6 +526,19 @@ namespace Melia.Zone.World.Actors.Characters.Components
 		/// Removes item with given id from inventory.
 		/// </summary>
 		/// <param name="slot"></param>
+		public InventoryResult Remove(long worldId, int amount = 1, InventoryItemRemoveMsg msg = InventoryItemRemoveMsg.Destroyed, InventoryType type = InventoryType.Inventory)
+		{
+			var item = this.GetItem(worldId);
+			if (item == null || item is DummyEquipItem)
+				return InventoryResult.ItemNotFound;
+
+			return this.Remove(item, amount, msg);
+		}
+
+		/// <summary>
+		/// Removes item with given id from inventory.
+		/// </summary>
+		/// <param name="slot"></param>
 		public InventoryResult Remove(long worldId, int amount = 1)
 		{
 			var item = this.GetItem(worldId);
