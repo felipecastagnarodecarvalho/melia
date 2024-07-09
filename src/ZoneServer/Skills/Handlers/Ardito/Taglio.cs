@@ -13,6 +13,8 @@ using Melia.Zone.World.Actors.Characters.Components;
 using Melia.Zone.World.Actors.CombatEntities.Components;
 using static Melia.Zone.Skills.SkillUseFunctions;
 
+// TODO: Implement the usage of new casting functions `character.SetCastingState(false);`
+// TODO: Implement a move speed boost to the caster on the Taglio Buff
 namespace Melia.Zone.Skills.Handlers.Ardito
 {
 	/// <summary>
@@ -66,11 +68,9 @@ namespace Melia.Zone.Skills.Handlers.Ardito
 		/// <param name="caster"></param>
 		public void EndDynamicCast(Skill skill, ICombatEntity caster)
 		{
-			var buffComponent = caster.Components.Get<BuffComponent>();
-
-			if (buffComponent.Has(BuffId.Taglio_Buff))
+			if (caster.IsBuffActive(BuffId.Taglio_Buff))
 			{
-				buffComponent.Remove(BuffId.Taglio_Buff);
+				caster.StopBuff(BuffId.Taglio_Buff);
 			}
 
 			Send.ZC_NORMAL.UnkDynamicCastEnd(caster, skill.Id, 2.1f);
@@ -147,7 +147,7 @@ namespace Melia.Zone.Skills.Handlers.Ardito
 		/// <param name="skill"></param>
 		/// <param name="caster"></param>
 		/// <param name="target"></param>
-		private async void ExecuteHitInfo(Skill skill, ICombatEntity caster, ICombatEntity target)
+		private void ExecuteHitInfo(Skill skill, ICombatEntity caster, ICombatEntity target)
 		{
 			var damageDelay = TimeSpan.FromMilliseconds(45);
 			var skillHitDelay = skill.Properties.HitDelay;
@@ -172,8 +172,6 @@ namespace Melia.Zone.Skills.Handlers.Ardito
 			}
 
 			Send.ZC_SKILL_HIT_INFO(caster, skillHit);
-
-			await Task.Delay(150);
 		}
 	}
 }

@@ -13,6 +13,7 @@ using Melia.Zone.World.Actors.CombatEntities.Components;
 using Melia.Zone.Skills.Combat;
 using static Melia.Zone.Skills.SkillUseFunctions;
 
+// TODO: Check the skill effect time (15 seconds seems too much)
 namespace Melia.Zone.Skills.Handlers.Enchanter
 {
 	/// <summary>

@@ -14,6 +14,9 @@ using Melia.Zone.World.Actors.CombatEntities.Components;
 using Melia.Zone.World.Actors.Monsters;
 using static Melia.Zone.Skills.SkillUseFunctions;
 
+// TODO: Instead of straight lower the MoveSpeed apply a Debuff to the target.
+// TODO: Apply healing Debuff (Check tooltip)
+// TODO: Fix weird cooldown usage message
 namespace Melia.Zone.Skills.Handlers.Sapper
 {
 	/// <summary>
@@ -143,8 +146,6 @@ namespace Melia.Zone.Skills.Handlers.Sapper
 		private async void AlertRange(Skill skill, ICombatEntity caster, Mob trap, int effectId, CancellationTokenSource cancellationTokenSource)
 		{
 			var splashArea = new Circle(trap.Position, 45);
-
-			Debug.ShowShape(caster.Map, splashArea, edgePoints: false);
 
 			while (!cancellationTokenSource.Token.IsCancellationRequested)
 			{

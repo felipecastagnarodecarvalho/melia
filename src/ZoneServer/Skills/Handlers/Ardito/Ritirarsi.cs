@@ -11,6 +11,8 @@ using Melia.Zone.World.Actors;
 using Melia.Zone.World.Actors.Characters.Components;
 using static Melia.Zone.Skills.SkillUseFunctions;
 
+// TODO: Make the player invencible to damage while jumping/casting the skill
+// TODO: Remove a debuff from  the caster at a chance
 namespace Melia.Zone.Skills.Handlers.Ardito
 {
 	/// <summary>

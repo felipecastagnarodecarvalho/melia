@@ -12,8 +12,8 @@ using Melia.Zone.World.Actors.Monsters;
 using static Melia.Zone.Skills.SkillUseFunctions;
 using System.Collections.Generic;
 using Melia.Shared.Game.Const;
-using System.Linq;
 
+// TODO: Fi the Shape that appears to be slightly behind the effect movement and it becomes out of sync
 namespace Melia.Zone.Skills.Handlers.Sapper
 {
 	/// <summary>
@@ -114,9 +114,6 @@ namespace Melia.Zone.Skills.Handlers.Sapper
 				while (!cancellationTokenSource.IsCancellationRequested)
 				{
 					fan.RotateAround(center, 14f);
-
-					// The Shape appears to be slightly behind the effect movement and it becomes out of sync
-					Debug.ShowShape(caster.Map, fan, delay, rangePreview: false);
 
 					var targets = caster.Map.GetAttackableEntitiesIn(caster, fan);
 					var damageDelay = TimeSpan.FromMilliseconds(45);

@@ -43,7 +43,7 @@ namespace Melia.Zone.Skills.Handlers.Sapper
 
 			var removeList = new List<Mob>();
 
-			foreach (var trap in caster.PlacedTraps.FindAll(mob => mob.Id == 300010).ToList())
+			foreach (var trap in caster.PlacedTraps.FindAll(mob => mob.Id == 300009 || mob.Id == 57197).ToList())
 			{
 				caster.Map.RemoveMonster(trap);
 				removeList.Add(trap);

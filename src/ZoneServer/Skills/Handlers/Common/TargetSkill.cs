@@ -1,11 +1,7 @@
 ﻿using System;
-<<<<<<< HEAD
 using System.Collections.Generic;
 using Melia.Shared.L10N;
-=======
->>>>>>> master
 using Melia.Shared.Game.Const;
-using Melia.Shared.L10N;
 using Melia.Zone.Network;
 using Melia.Zone.Skills.Combat;
 using Melia.Zone.Skills.Handlers.Base;

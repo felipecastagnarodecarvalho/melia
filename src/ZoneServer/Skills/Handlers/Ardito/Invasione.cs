@@ -11,6 +11,7 @@ using Melia.Zone.Skills.SplashAreas;
 using Melia.Zone.World.Actors;
 using static Melia.Zone.Skills.SkillUseFunctions;
 
+// TODO: Inflict 30% healing reduction to the target on hit
 namespace Melia.Zone.Skills.Handlers.Ardito
 {
 	/// <summary>

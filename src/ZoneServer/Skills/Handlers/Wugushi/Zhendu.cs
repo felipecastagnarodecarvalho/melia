@@ -54,8 +54,8 @@ namespace Melia.Zone.Skills.Handlers.Wugushi
 
 				foreach (var target in targets)
 				{
-					var positonRes = target.Properties.GetFloat(PropertyName.Poison_Def);
-					target.Properties.SetFloat(PropertyName.Poison_Def_BM, -(positonRes * 0.1f));
+					var poisonDef = target.Properties.GetFloat(PropertyName.Poison_Def);
+					target.Properties.SetFloat(PropertyName.Poison_Def_BM, -(poisonDef * 0.1f));
 				}
 			}
 		}

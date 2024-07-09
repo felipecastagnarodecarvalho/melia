@@ -43,8 +43,9 @@ namespace Melia.Zone.Skills.Handlers.Enchanter
 			Send.ZC_NORMAL.UpdateSkillEffect(caster, caster.Handle, caster.Position, caster.Position.GetDirection(caster.Position), Position.Zero);
 			Send.ZC_SKILL_MELEE_GROUND(caster, skill, caster.Position, null);
 
-			// Radius seems precise
-			var radius = 150;
+			// Radius acquired from skill_bytool
+			// TODO: Cut in half in PVP Zones
+			var radius = 120;
 			var center = caster.Position.GetRelative(caster.Position, radius);
 			var splashArea = new Circle(center, radius);
 
@@ -61,8 +62,6 @@ namespace Melia.Zone.Skills.Handlers.Enchanter
 		private async void Attack(Skill skill, ICombatEntity caster, ISplashArea splashArea)
 		{
 			await Task.Delay(TimeSpan.FromSeconds(1));
-
-			Debug.ShowShape(caster.Map, splashArea, edgePoints: false);
 
 			// Attack targets
 			var targets = caster.Map.GetAttackableEntitiesIn(caster, splashArea);

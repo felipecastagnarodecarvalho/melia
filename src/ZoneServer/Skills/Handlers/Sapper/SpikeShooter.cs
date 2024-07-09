@@ -109,8 +109,6 @@ namespace Melia.Zone.Skills.Handlers.Sapper
 				var squareLeft = new Square(leftPos, direction, 160, 8);
 				var squareRight = new Square(rightPos, direction, 160, 8);
 
-				Debug.ShowShape(caster.Map, squareRight, edgePoints: false);
-
 				// Abillity - Spike Shooter: Penetration
 				// Fires an arrow that pierces enemies{nl}* Increases cooldown by 5 seconds
 				if (caster is Character casterCharacter && casterCharacter.Abilities.IsActive(AbilityId.Sapper51))

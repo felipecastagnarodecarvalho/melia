@@ -9,6 +9,7 @@ using Melia.Zone.Skills.Handlers.Base;
 using Melia.Zone.World.Actors;
 using Melia.Zone.World.Actors.Characters;
 
+// TODO: Remove a debuff from  the caster at a chance
 namespace Melia.Zone.Skills.Handlers.Ardito
 {
 	/// <summary>

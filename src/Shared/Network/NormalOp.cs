@@ -62,22 +62,17 @@
 			public const int Skill_99 = 0x99;
 			public const int Unknown_A1 = 0xA1;
 			public const int LeapJump = 0xC2;
-<<<<<<< HEAD
 			public const int Skill_C8 = 0xC8;
 			public const int Unknown_DA = 0xDA;
 			public const int SkillParticleEffect = 0xE0;
 			public const int PlayTextEffect = 0xE3;
 			public const int Unknown_E4 = 0xE4;
 			public const int Unknown_EF = 0xF0;
+			public const int Unknown_DD = 0xDD;
+			public const int Unknown_E7 = 0xE7;
+			public const int Unknown_F2 = 0xF2;
 			public const int Skill_122 = 0x122;
 			public const int Skill_123 = 0x123;
-=======
-			public const int Unknown_DA = 0xDD;
-			public const int SkillParticleEffect = 0xE0;
-			public const int PlayTextEffect = 0xE3;
-			public const int Unknown_E4 = 0xE7;
-			public const int Unknown_EF = 0xF2;
->>>>>>> master
 			public const int ChannelTraffic = 0x12D;
 			public const int SetGreetingMessage = 0x136;
 			public const int Unk13E = 0x13E;

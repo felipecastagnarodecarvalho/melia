@@ -13,6 +13,7 @@ using Melia.Zone.World.Actors.Monsters;
 using Melia.Zone.Skills.SplashAreas;
 using static Melia.Zone.Skills.SkillUseFunctions;
 
+// TODO: Check if the trap can still hit other monster after being activiated
 namespace Melia.Zone.Skills.Handlers.Sapper
 {
 	/// <summary>
@@ -123,13 +124,9 @@ namespace Melia.Zone.Skills.Handlers.Sapper
 		{
 			var splashArea = new Circle(trap.Position, 30);
 
-			Debug.ShowShape(caster.Map, splashArea, edgePoints: false);
-
 			var triggerCount = 0;
 
 			var splashTriggerArea = new Circle(trap.Position, 35);
-
-			Debug.ShowShape(caster.Map, splashTriggerArea, edgePoints: false);
 
 			while (!cancellationTokenSource.IsCancellationRequested)
 			{

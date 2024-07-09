@@ -209,37 +209,7 @@ public class CombatCalculationsScript : GeneralScript
 		// since moved to the skill handlers. We'll keep this function around
 		// for the moment though, if only to allow overriding it from scripts.
 
-<<<<<<< HEAD
-		var rnd = RandomProvider.Get();
-
-		if ((skill.Id == SkillId.Common_DaggerAries || skill.Id == SkillId.Pistol_Attack) && attacker.Components.Get<BuffComponent>().Has(BuffId.DoubleAttack_Buff))
-		{
-			var rate = 40;
-
-			if (rnd.Next(100) < rate)
-				return 2;
-		}
-		else if (skill.Id == SkillId.Wizard_EarthQuake && target.Components.Get<BuffComponent>().Has(BuffId.Lethargy_Debuff))
-		{
-			return 2;
-		}
-		else if (skill.Id == SkillId.Wizard_EnergyBolt || skill.Id == SkillId.Archer_TwinArrows)
-		{
-			return 2;
-		}
-		else if (skill.Id == SkillId.Arditi_Invasione)
-		{
-			return 4;
-		}
-		else if (skill.Id == SkillId.Arditi_Granata || skill.Id == SkillId.Arditi_Ritirarsi)
-		{
-			return 6;
-		}
-
-		return 1;
-=======
 		return modifier.HitCount;
->>>>>>> master
 	}
 
 	/// <summary>
