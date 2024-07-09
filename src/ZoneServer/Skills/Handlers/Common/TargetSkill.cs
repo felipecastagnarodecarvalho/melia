@@ -1,13 +1,17 @@
 ﻿using System;
+<<<<<<< HEAD
 using System.Collections.Generic;
 using Melia.Shared.L10N;
+=======
+>>>>>>> master
 using Melia.Shared.Game.Const;
+using Melia.Shared.L10N;
 using Melia.Zone.Network;
 using Melia.Zone.Skills.Combat;
 using Melia.Zone.Skills.Handlers.Base;
 using Melia.Zone.Skills.SplashAreas;
 using Melia.Zone.World.Actors;
-using Melia.Zone.World.Actors.CombatEntities.Components;
+using Yggdrasil.Util;
 using static Melia.Zone.Skills.SkillUseFunctions;
 
 namespace Melia.Zone.Skills.Handlers.Common
@@ -18,6 +22,8 @@ namespace Melia.Zone.Skills.Handlers.Common
 	[SkillHandler(SkillId.Bow_Attack, SkillId.Magic_Attack, SkillId.Pistol_Attack)]
 	public class TargetSkill : ITargetSkillHandler
 	{
+		private const int DoubleAttackRate = 40;
+
 		/// <summary>
 		/// Handles usage of the skill.
 		/// </summary>
@@ -48,7 +54,16 @@ namespace Melia.Zone.Skills.Handlers.Common
 			var damageDelay = TimeSpan.FromMilliseconds(500);
 			var skillHitDelay = skill.Properties.HitDelay;
 
-			var skillHitResult = SCR_SkillHit(caster, target, skill);
+			var modifier = SkillModifier.Default;
+
+			// Random chance to trigger double hit with pistol while buff is active
+			if (skill.Id == SkillId.Pistol_Attack && caster.IsBuffActive(BuffId.DoubleAttack_Buff))
+			{
+				if (RandomProvider.Get().Next(100) < DoubleAttackRate)
+					modifier.HitCount = 2;
+			}
+
+			var skillHitResult = SCR_SkillHit(caster, target, skill, modifier);
 			target.TakeDamage(skillHitResult.Damage, caster);
 
 			var skillHit = new SkillHitInfo(caster, target, skill, skillHitResult, damageDelay, skillHitDelay);
