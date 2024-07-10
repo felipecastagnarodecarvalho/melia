@@ -17,60 +17,45 @@ namespace Melia.Zone.Buffs.Handlers
 
 		public override void OnStart(Buff buff)
 		{
-			if (buff.Caster is Character casterCharacter)
-			{
-				// It is not applied to characters without Gloves
-				if (buff.Caster is Character targetCaster && !(targetCaster.Inventory.GetEquip(EquipSlot.Gloves) is DummyEquipItem))
-				{
-					// Apply penalty when the CASTER Max Physical Attack is lower than the TARGET Max Physical Attack
-					// TODO: Find out the exactly value of the penalty (We are applying 50%)
-					var casterMaxPAtk = casterCharacter.Properties.GetFloat(PropertyName.MAXPATK);
-					var targetMaxPAtk = targetCaster.Properties.GetFloat(PropertyName.MAXPATK);
-					var penaltyValue = casterMaxPAtk < targetMaxPAtk ? 0.5f : 1f;
+			// It is not applied to characters without Gloves
+			if (buff.Caster is Character targetCaster && !(targetCaster.Inventory.GetEquip(EquipSlot.Gloves) is DummyEquipItem))
+				return;
+				
+			// Apply penalty when the CASTER Max Physical Attack is lower than the TARGET Max Physical Attack
+			// TODO: Find out the exactly value of the penalty (We are applying 50%)
+			var casterMaxPAtk = buff.Caster.Properties.GetFloat(PropertyName.MAXPATK);
+			var targetMaxPAtk = buff.Target.Properties.GetFloat(PropertyName.MAXPATK);
+			var penaltyValue = casterMaxPAtk < targetMaxPAtk ? 0.5f : 1f;
 
-					var skillLevel = buff.NumArg1;
+			var skillLevel = buff.NumArg1;
 
-					var data = ZoneServer.Instance.Data.SkillDb.Find("Enchanter_EnchantGlove");
+			var data = ZoneServer.Instance.Data.SkillDb.Find("Enchanter_EnchantGlove");
 
-					var initialHitRateBonus = data.Factor + (skillLevel * data.FactorByLevel);
-					var hitRateBonus = initialHitRateBonus * penaltyValue;
+			var initialHitRateBonus = data.Factor + (skillLevel * data.FactorByLevel);
+			var hitRateBonus = initialHitRateBonus * penaltyValue;
+			var abilityComponents = buff.Caster.Components.Get<AbilityComponent>();
 
-					if (casterCharacter.Components.Get<AbilityComponent>().Has(AbilityId.Enchanter9))
-					{
-						var SCR_Get_SkillFactor = ScriptableFunctions.Skill.Get("SCR_Get_SkillFactor");
-						if (casterCharacter.Skills.TryGet(buff.SkillId, out var skill))
-						{
-							var abilityBonus = SCR_Get_SkillFactor(skill);
-							hitRateBonus += abilityBonus;
-						}
-					}
+			// TODO: Add SkillFactor based on the Ability learned.
+			//if (abilityComponents.Has(AbilityId.Enchanter9) || abilityComponents.Has(AbilityId.Enchanter14))
+			//{
+			//	var SCR_Get_SkillFactor = ScriptableFunctions.Skill.Get("SCR_Get_SkillFactor");
+			//	if (buff.Caster is Character casterCharacter && casterCharacter.Skills.TryGet(buff.SkillId, out var skill))
+			//	{
+			//		var abilityBonus = SCR_Get_SkillFactor(skill);
+			//		hitRateBonus += abilityBonus;
+			//	}
+			//}
 
-					if (casterCharacter.Components.Get<AbilityComponent>().Has(AbilityId.Enchanter14))
-					{
-						var SCR_Get_SkillFactor = ScriptableFunctions.Skill.Get("SCR_Get_SkillFactor");
-						casterCharacter.Skills.TryGet(buff.SkillId, out var skill);
-						if (skill != null)
-						{
-							var abilityBonus = SCR_Get_SkillFactor(skill);
-							hitRateBonus += abilityBonus;
-						}
-					}
+			buff.Vars.SetFloat(VarName, hitRateBonus);
 
-					buff.Vars.SetFloat(VarName, hitRateBonus);
-
-					buff.Target.Properties.Modify(PropertyName.HR_BM, hitRateBonus);
-				}
-			}
+			buff.Target.Properties.Modify(PropertyName.HR_BM, hitRateBonus);			
 		}
 
 		public override void OnEnd(Buff buff)
 		{
-			if (buff.Target is Character)
+			if (buff.Vars.TryGetFloat(VarName, out var bonus))
 			{
-				if (buff.Vars.TryGetFloat(VarName, out var bonus))
-				{
-					buff.Target.Properties.Modify(PropertyName.HR_BM, -bonus);
-				}
+				buff.Target.Properties.Modify(PropertyName.HR_BM, -bonus);
 			}
 		}
 	}

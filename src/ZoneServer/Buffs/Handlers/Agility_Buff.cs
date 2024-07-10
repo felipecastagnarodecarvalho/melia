@@ -56,16 +56,14 @@ namespace Melia.Zone.Buffs.Handlers
 		{
 			if (buff.Target is Character targetCharacter)
 			{
-				var target = buff.Target as Character;
-
 				if (buff.Vars.TryGetFloat(VarNameMVSD, out var bonus))
 				{
-					buff.Target.Properties.Modify(PropertyName.MSPD_BM, -bonus);
+					targetCharacter.Properties.Modify(PropertyName.MSPD_BM, -bonus);
 				}
 
 				if (buff.Vars.TryGetFloat(VarNameSTA, out var bonusStamina))
 				{
-					buff.Target.Properties.Modify(PropertyName.MOVESTA_RATE_BM, bonusStamina);
+					targetCharacter.Properties.Modify(PropertyName.MOVESTA_RATE_BM, bonusStamina);
 				}
 
 				Send.ZC_MOVE_SPEED(targetCharacter);

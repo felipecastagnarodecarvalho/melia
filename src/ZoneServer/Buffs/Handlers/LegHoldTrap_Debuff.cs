@@ -22,6 +22,8 @@ namespace Melia.Zone.Buffs.Handlers
 				movementComponent?.Stop();
 			}
 
+
+			// TODO: Find a better way of decrease the target MVSPD
 			target.Properties.Modify(PropertyName.FIXMSPD_BM, 0.00001f);
 			Send.ZC_MSPD(target);
 		}

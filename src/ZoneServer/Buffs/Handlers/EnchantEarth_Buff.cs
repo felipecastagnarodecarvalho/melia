@@ -14,21 +14,24 @@ namespace Melia.Zone.Buffs.Handlers
 	[BuffHandler(BuffId.EnchantEarth_Buff)]
 	public class EnchantEarth_Buff : BuffHandler
 	{
-		private const string VarName = "Melia.BlockPenetrationBonus";
+		private const string VarName = "Melia.EnchantEarth_Buff.BlockPenetrationBonus";
 		private const string DifferentMapVarName = "Melia.EnchantEarth_Buff.DifferentMap";
 
-		public override void WhileActive(Buff buff)
+		public override async void WhileActive(Buff buff)
 		{
 			// End the Buff if the Caster is Disconnected
-			if (buff.Caster is Character casterCharacter  && !casterCharacter.Connection.LoggedIn)
+			// TODO: Replace !casterCharacter.Connection.LoggedIn with a right way of checking if the character is online
+			if (buff.Caster is Character casterCharacter && !casterCharacter.Connection.LoggedIn)
 			{
 				buff.End();
+				return;
 			}
 
 			// End the Buff if the Caster is Dead
 			if (buff.Caster.IsDead)
 			{
 				buff.End();
+				return;
 			}
 
 			// Ends the Buff if the Caster and Target are not in the same map
@@ -39,13 +42,17 @@ namespace Melia.Zone.Buffs.Handlers
 				if (differentMapHelper + 1 >= 3)
 				{
 					buff.End();
+					return;
 				}
 
 				buff.Vars.SetInt(DifferentMapVarName, differentMapHelper + 1);
-			} else
+			}
+			else
 			{
 				buff.Vars.SetInt(DifferentMapVarName, 0);
 			}
+
+			await Task.Delay(TimeSpan.FromSeconds(10));
 		}
 
 		public override void OnStart(Buff buff)
@@ -61,7 +68,7 @@ namespace Melia.Zone.Buffs.Handlers
 				var skillLevel = buff.NumArg1;
 
 				var data = ZoneServer.Instance.Data.SkillDb.Find(SkillId.Enchanter_EnchantEarth);
-				// Level 1 => 5 + 1*1 = 6%
+
 				var initialBlockPenBonus = data.Factor + (skillLevel * data.FactorByLevel);
 				var blockPenetrationBonus = initialBlockPenBonus * penaltyValue;
 

@@ -4005,7 +4005,7 @@ namespace Melia.Zone.Network
 		}
 
 		/// <summary>
-		/// Updates certain skill properties, such as speed rate, hit
+		/// Updates certain skill Speed Rate property
 		/// delay, and max overheat count.
 		/// </summary>
 		/// <param name="character"></param>
@@ -4028,7 +4028,7 @@ namespace Melia.Zone.Network
 		}
 
 		/// <summary>
-		/// Updates certain skill properties, such as speed rate, hit
+		/// Display an effect on the ground
 		/// delay, and max overheat count.
 		/// </summary>
 		/// <param name="caster"></param>
@@ -4057,30 +4057,28 @@ namespace Melia.Zone.Network
 		}
 
 		/// <summary>
-		/// Plays a sound on all clients
-		/// delay, and max overheat count.
+		/// Plays a sound
 		/// </summary>
-		/// <param name="caster"></param>
+		/// <param name="character"></param>
 		/// <param name="packetString"></param>
-		public static void ZC_PLAY_SOUND(Character caster, string packetString)
+		public static void ZC_PLAY_SOUND(Character character, string packetString)
 		{
 			if (!ZoneServer.Instance.Data.PacketStringDb.TryFind(packetString, out var packetStringData))
 				throw new ArgumentException($"Unknown packet string '{packetString}'.");
 
 			var packet = new Packet(Op.ZC_PLAY_SOUND);
 
-			packet.PutInt(caster.Handle);
+			packet.PutInt(character.Handle);
 			packet.PutInt(packetStringData.Id);
 			packet.PutByte(0);
 			packet.PutFloat(-1);
 			packet.PutByte(0);
 
-			caster.Map.Broadcast(packet, caster);
+			character.Map.Broadcast(packet, character);
 		}
 
 		/// <summary>
-		/// Plays a sound on all clients
-		/// delay, and max overheat count.
+		/// Stops a sound
 		/// </summary>
 		/// <param name="combatEntity"></param>
 		/// <param name="packetString"></param>
@@ -4098,25 +4096,23 @@ namespace Melia.Zone.Network
 		}
 
 		/// <summary>
-		/// Notices a knowck down event to a specific target
+		/// Notifies nearby clients that an entity was knocked down/back
 		/// </summary>
 		/// <param name="entity"></param>
 		/// <param name="target"></param>
-		/// <param name="initialPos"></param>
-		/// <param name="toPos"></param>
-		/// <param name="angle"></param>
-		public static void ZC_KNOCKDOWN_INFO(ICombatEntity entity, ICombatEntity target, KnockBackInfo knickBackInfo)
+		/// <param name="knockBackInfo"></param>
+		public static void ZC_KNOCKDOWN_INFO(ICombatEntity entity, ICombatEntity target, KnockBackInfo knockBackInfo)
 		{
 			var packet = new Packet(Op.ZC_KNOCKDOWN_INFO);
 
 			packet.PutInt(target.Handle);
-			packet.PutPosition(knickBackInfo.FromPosition);
-			packet.PutPosition(knickBackInfo.ToPosition);
-			packet.PutInt(knickBackInfo.Velocity);
-			packet.PutInt(knickBackInfo.HAngle);
-			packet.PutInt(knickBackInfo.VAngle);
+			packet.PutPosition(knockBackInfo.FromPosition);
+			packet.PutPosition(knockBackInfo.ToPosition);
+			packet.PutInt(knockBackInfo.Velocity);
+			packet.PutInt(knockBackInfo.HAngle);
+			packet.PutInt(knockBackInfo.VAngle);
 			packet.PutInt(0);
-			packet.PutShort((short)knickBackInfo.Time.TotalMilliseconds);
+			packet.PutShort((short)knockBackInfo.Time.TotalMilliseconds);
 			packet.PutShort(0);
 			packet.PutFloat(1);
 			packet.PutFloat(1);

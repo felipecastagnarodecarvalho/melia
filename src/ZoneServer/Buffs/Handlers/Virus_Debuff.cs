@@ -7,7 +7,7 @@ using Melia.Shared.Game.Const;
 namespace Melia.Zone.Buffs.Handlers
 {
 	/// <summary>
-	/// Handle for the Virus Debuff, which ticks damage every second.
+	/// Handle for the Virus Debuff, which ticks damage while active.
 	/// </summary>
 	[BuffHandler(BuffId.Virus_Debuff)]
 	public class Virus_Debuff : BuffHandler
@@ -21,21 +21,18 @@ namespace Melia.Zone.Buffs.Handlers
 
 		public override void WhileActive(Buff buff)
 		{
-			if (buff.Caster is Character casterCharacter)
+			if (buff.Target.IsDead)
 			{
-				if (buff.Target.IsDead)
-				{
-					return;
-				}
-
-				// The damage amount is unknow, for now we are dealing
-				// the same amount as the original skill hit is passed as NumberArg2
-				buff.Target.TakeDamage(buff.NumArg2, casterCharacter);
-
-				var hit = new HitInfo(casterCharacter, buff.Target, null, buff.NumArg2, HitResultType.Hit);
-
-				Send.ZC_HIT_INFO(casterCharacter, buff.Target, null, hit);
+				return;
 			}
+
+			// The damage amount is unknow, for now we are dealing
+			// the same amount as the original skill hit is passed as NumberArg2
+			buff.Target.TakeDamage(buff.NumArg2, buff.Caster);
+
+			var hit = new HitInfo(buff.Caster, buff.Target, null, buff.NumArg2, HitResultType.Hit);
+
+			Send.ZC_HIT_INFO(buff.Caster, buff.Target, null, hit);
 		}
 	}
 }

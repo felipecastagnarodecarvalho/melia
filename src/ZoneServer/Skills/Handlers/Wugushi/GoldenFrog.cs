@@ -78,8 +78,6 @@ namespace Melia.Zone.Skills.Handlers.Enchanter
 			var center = position.GetRelative(position, radius);
 			var splashArea = new Circle(center, radius);
 
-			Debug.ShowShape(caster.Map, splashArea, edgePoints: false);
-
 			using (var cancellationTokenSource = new CancellationTokenSource())
 			{
 				cancellationTokenSource.CancelAfter(TimeSpan.FromSeconds(15));

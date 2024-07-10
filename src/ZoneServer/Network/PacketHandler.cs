@@ -1330,10 +1330,7 @@ namespace Melia.Zone.Network
                 character.SetCastingState(true);
                 handler.StartDynamicCast(skill, character, maxCastType);
 			}
-			catch (ArgumentException ex)
-			{
-				// Silence
-			}
+			catch (ArgumentException){}
 		}
 
 		/// <summary>

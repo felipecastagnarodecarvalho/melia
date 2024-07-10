@@ -10,22 +10,22 @@ namespace Melia.Zone.Buffs.Handlers
 	[BuffHandler(BuffId.Zhendu_Buff)]
 	public class Zhendu_Buff : BuffHandler
 	{
-		private const string varName = "Melia.dmgIncreasePercentage";
+		private const string varName = "Melia.Zhendu_Buff.DmgIncPercentage";
 
 		public override void OnStart(Buff buff)
 		{
-			var dmgIncreasePercentage = 100 + this.GetDamagePercentageIncrease(buff);
+			var dmgIncPercentage = 100 + this.GetDamageIncreasePercentage(buff);
 
-			buff.Vars.SetFloat(varName, dmgIncreasePercentage);
+			buff.Vars.SetFloat(varName, dmgIncPercentage);
 
-			// TODO: Increase all the Wugushi skills damage by a percentage
+			// TODO: Increase all the Wugushi skills damage by a percentage (Look into  Deeds of Valor - Doppel PR)
 		}
 
 		public override void OnEnd(Buff buff)
 		{
 			if (buff.Vars.TryGetFloat(varName, out var bonus))
 			{
-				// TODO: Decrease all the Wugushi skills damage by a percentage
+				// TODO: Decrease all the Wugushi skills damage by a percentage (Look into  Deeds of Valor - Doppel PR)
 			}
 		}
 
@@ -43,7 +43,7 @@ namespace Melia.Zone.Buffs.Handlers
 			return Convert.ToSingle(value);
 		}*/
 
-		private float GetDamagePercentageIncrease(Buff buff)
+		private float GetDamageIncreasePercentage(Buff buff)
 		{
 			var skillLevel = buff.NumArg1;
 			return 5 + skillLevel * 2;

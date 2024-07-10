@@ -16,6 +16,7 @@ using Yggdrasil.Composition;
 using Yggdrasil.Logging;
 using Yggdrasil.Scheduling;
 using Yggdrasil.Util;
+using Melia.Zone.Buffs;
 
 namespace Melia.Zone.World.Actors.Monsters
 {
@@ -725,10 +726,10 @@ namespace Melia.Zone.World.Actors.Monsters
 		/// <param name="spAmount"></param>
 		public void Heal(float hpAmount, float spAmount)
 		{
-			// 30% of healing reduced
-			if (Buffs.Has(BuffId.DecreaseHeal_Debuff))
+			// Healing reduction
+			if (Buffs.TryGet(BuffId.DecreaseHeal_Debuff, out var decreaseHeallBuff))
 			{
-				hpAmount *= 0.7f;
+				hpAmount *= 1f - decreaseHeallBuff.NumArg2;
 			}
 
 			this.Properties.Modify(PropertyName.HP, hpAmount);

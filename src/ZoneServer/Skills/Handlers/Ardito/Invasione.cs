@@ -42,8 +42,6 @@ namespace Melia.Zone.Skills.Handlers.Ardito
 			var splashParam = skill.GetSplashParameters(caster, originPos, farPos, length: 70, width: 30, angle: 60);
 			var splashArea = skill.GetSplashArea(SplashType.Square, splashParam);
 
-			Debug.ShowShape(caster.Map, splashArea, edgePoints: false);
-
 			Send.ZC_SKILL_READY(caster, skill, originPos, farPos);
 			Send.ZC_NORMAL.UpdateSkillEffect(caster, 0, originPos, caster.Position.GetDirection(farPos), Position.Zero);
 			Send.ZC_SKILL_MELEE_GROUND(caster, skill, farPos, null);

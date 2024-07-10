@@ -22,7 +22,7 @@ namespace Melia.Zone.Buffs.Handlers
 
 		}
 
-		private float getBonusRatio(Skill skill)
+		private float GetBonusRatio(Skill skill)
 		{
 			return 12 + skill.Level * 2;
 		}

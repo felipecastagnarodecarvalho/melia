@@ -11,6 +11,7 @@ using Melia.Zone.Skills.Combat;
 using System.Collections.Generic;
 using static Melia.Zone.Skills.SkillUseFunctions;
 
+// TODO: Compare the stealth with the Assassin implementation
 namespace Melia.Zone.Skills.Handlers.Enchanter
 {
 	/// <summary>
@@ -74,7 +75,7 @@ namespace Melia.Zone.Skills.Handlers.Enchanter
 
 				Send.ZC_SHOW_EMOTICON(target, "shootpad_spector", TimeSpan.FromMilliseconds(2000));
 				target.StartBuff(BuffId.WideMiasma_Debuff, skill.Level, skillHitResult.Damage, TimeSpan.FromSeconds(15), caster);
-				target.StartBuff(BuffId.DecreaseHeal_Debuff, skill.Level, skillHitResult.Damage, TimeSpan.FromSeconds(20), caster);
+				target.StartBuff(BuffId.DecreaseHeal_Debuff, skill.Level, 0.3f, TimeSpan.FromSeconds(20), caster);
 			}
 		}
 	}
