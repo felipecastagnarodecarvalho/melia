@@ -910,6 +910,7 @@ switch (type)
         byte b1;
         break;
 
+    // PlayTextEffect
     case 0xE3:
         int targetHandle;
         int characterHandle;
@@ -918,8 +919,8 @@ switch (type)
         short argStrLen; // -1
         if (argStrLen > -1)
             char argStr[argStrLen]; // defaults to "None"
-        int i1;
-        int i2;
+        int idSpace; // packet string
+        int classId;
         break;
     
     // ?
