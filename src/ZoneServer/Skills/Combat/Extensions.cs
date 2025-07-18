@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Melia.Shared.Game.Const;
+using Melia.Shared.World;
 using Melia.Zone.World.Actors;
 using Yggdrasil.Util;
 
@@ -62,6 +63,21 @@ namespace Melia.Zone.Skills.Combat
 			targets = targets.OrderBy(a => rnd.Next());
 
 			return targets.Limit(maxAmount);
+		}
+
+		/// <summary>
+		/// Returns Cossets targets within a distance
+		/// to the the max amount.
+		/// </summary>
+		/// <param name="targets"></param>
+		/// <param name="maxAmount"></param>
+		/// <param name="casterPosition"></param>
+		/// <returns></returns>
+		public static IEnumerable<ICombatEntity> LimitCossets(this IEnumerable<ICombatEntity> targets, int maxAmount, Position casterPosition)
+		{
+			return targets
+				.OrderBy(target => target.Position.Get2DDistance(casterPosition))
+				.Take(maxAmount);
 		}
 
 		/// <summary>

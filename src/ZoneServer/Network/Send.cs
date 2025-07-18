@@ -2262,7 +2262,7 @@ namespace Melia.Zone.Network
 			packet.PutInt((int)skill.Id);
 			packet.PutFloat(1);
 			packet.PutFloat(1);
-			packet.PutInt(0);
+			packet.PutInt(1);
 			packet.PutPosition(position1);
 			packet.PutPosition(position2);
 

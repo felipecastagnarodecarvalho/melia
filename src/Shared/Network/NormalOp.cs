@@ -47,6 +47,7 @@ namespace Melia.Shared.Network
 			public const int Skill_42 = 0x42;
 			public const int Skill_43 = 0x43;
 			public const int Skill_45 = 0x45;
+			public const int Skill_46 = 0x46;
 			public const int AccountProperties = 0x4D;
 			public const int UnkDynamicCastStart = 0x4F;
 			public const int UnkDynamicCastEnd = 0x50;
@@ -71,7 +72,8 @@ namespace Melia.Shared.Network
 			public const int Unknown_EF = 0xF2;
 			public const int ChannelTraffic = 0x12D;
 			public const int SetGreetingMessage = 0x136;
-			public const int Unk13E = 0x13E;
+			public const int Unk13E = 0x13E;			
+			public const int UpdateModelEffect = 0x14D;
 			public const int SetSessionKey = 0x14F;
 			public const int ItemDrop = 0x152;
 			public const int NGSCallback = 0x170;

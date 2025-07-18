@@ -58,6 +58,11 @@
 		Buff12 = 12,
 
 		/// <summary>
+		/// Unknow 16
+		/// </summary>
+		Unk16 = 16,
+
+		/// <summary>
 		/// Hit done by buffs, exact purpose unknown.
 		/// </summary>
 		Buff26 = 26,

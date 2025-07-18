@@ -1282,7 +1282,6 @@ namespace Melia.Zone.Network
 				character.Connection.Send(packet);
 			}
 
-
 			/// <summary>
 			/// Updates the collection for the player.
 			/// </summary>
@@ -1343,6 +1342,7 @@ namespace Melia.Zone.Network
 				actor.Map.Broadcast(packet);
 			}
 
+			/// <summary>
 			/// Opens book for the player.
 			/// </summary>
 			/// <param name="character"></param>
@@ -1356,6 +1356,60 @@ namespace Melia.Zone.Network
 				packet.PutLpString(bookName);
 
 				character.Connection.Send(packet);
+			}
+
+			/// <summary>
+			/// Exact purpose unknown, used in some Cryomancer skills.
+			/// </summary>
+			/// <param name="caster"></param>
+			public static void Skill_45(IActor caster)
+			{
+				var packet = new Packet(Op.ZC_NORMAL);
+				packet.PutInt(NormalOp.Zone.Skill_45);
+
+				packet.PutInt(caster.Handle);
+				packet.PutInt(0);
+
+				caster.Map.Broadcast(packet);
+			}
+
+			/// <summary>
+			/// Exact purpose unknown, used in some Cryomancer skills.
+			/// </summary>
+			/// <param name="caster"></param>
+			/// <param name="skillId"></param>
+			public static void Skill_46(IActor caster, SkillId skillId)
+			{
+				var packet = new Packet(Op.ZC_NORMAL);
+				packet.PutInt(NormalOp.Zone.Skill_46);
+
+				packet.PutInt(caster.Handle);
+				packet.PutInt((int)skillId);
+
+				caster.Map.Broadcast(packet);
+			}
+
+			/// <summary>
+			/// Updates the effect of a combat entity model.
+			/// </summary>
+			/// <remarks>
+			/// Used in Cryomancer skills.
+			/// </remarks>
+			/// <param name="actor"></param>
+			/// <param name="effectName"></param>
+			/// <param name="effectType"></param>
+			/// <param name="duration">Duration in milliseconds.</param>
+			public static void UpdateModelEffect(IActor actor, string effectName, string effectType, int duration)
+			{
+				var packet = new Packet(Op.ZC_NORMAL);
+				packet.PutInt(NormalOp.Zone.UpdateModelEffect);
+
+				packet.PutInt(actor.Handle);
+				packet.PutInt(duration);
+				packet.PutLpString(effectName);
+				packet.PutLpString(effectType);
+
+				actor.Map.Broadcast(packet);
 			}
 		}
 	}
