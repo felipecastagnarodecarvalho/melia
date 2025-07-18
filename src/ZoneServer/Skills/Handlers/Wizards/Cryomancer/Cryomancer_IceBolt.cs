@@ -14,7 +14,7 @@ using Yggdrasil.Util;
 using static Melia.Shared.Util.TaskHelper;
 using static Melia.Zone.Skills.SkillUseFunctions;
 
-namespace Melia.Zone.Skills.Handlers.Archers.Archer
+namespace Melia.Zone.Skills.Handlers.Archers.Cryomancer
 {
 	/// <summary>
 	/// Handler for the Archer skill Ice Bolt.
@@ -83,7 +83,7 @@ namespace Melia.Zone.Skills.Handlers.Archers.Archer
 			caster.TurnTowards(farPos);
 			caster.SetAttackState(true);
 
-			var splashParam = skill.GetSplashParameters(caster, originPos, farPos, length: 100, width: 60, angle: 160);
+			var splashParam = skill.GetSplashParameters(caster, originPos, farPos, length: 90, width: 50, angle: 160);
 			var splashArea = skill.GetSplashArea(SplashType.Circle, splashParam);
 
 			Send.ZC_SKILL_READY(caster, skill, originPos, Position.Zero);
