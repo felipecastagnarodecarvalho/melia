@@ -13,6 +13,7 @@ using Melia.Zone.Events.Arguments;
 using Melia.Zone.Network.Helpers;
 using Melia.Zone.Scripting;
 using Melia.Zone.Scripting.Dialogues;
+using Melia.Zone.Skills;
 using Melia.Zone.Skills.Handlers.Base;
 using Melia.Zone.World;
 using Melia.Zone.World.Actors;
@@ -1369,7 +1370,7 @@ namespace Melia.Zone.Network
 			if (!ZoneServer.Instance.SkillHandlers.TryGetHandler<IDynamicCasted>(skillId, out var handler))
 				return;
 
-			character.SetCastingState(true);
+			character.SetCastingState(true, skillId);
 			handler.StartDynamicCast(skill, character);
 		}
 
@@ -1396,7 +1397,7 @@ namespace Melia.Zone.Network
 			if (!ZoneServer.Instance.SkillHandlers.TryGetHandler<IDynamicCasted>(skillId, out var handler))
 				return;
 
-			character.SetCastingState(false);
+			character.SetCastingState(false, SkillId.None);
 			handler.EndDynamicCast(skill, character);
 		}
 
@@ -3086,6 +3087,77 @@ namespace Melia.Zone.Network
 			}
 
 			character.StopBuff(buffId);
+		}
+
+		/// <summary>
+		/// Sent when selecting cells for skills.
+		/// </summary>
+		/// <param name="conn"></param>
+		/// <param name="packet"></param>
+		[PacketHandler(Op.CZ_SKILL_CELL_LIST)]
+		public void CZ_SKILL_CELL_LIST(IZoneConnection conn, Packet packet)
+		{
+			var character = conn.SelectedCharacter;
+			var skillId = character.GetCastingSkillId();
+
+			if (!character.Skills.TryGet(skillId, out var skill))
+			{
+				Log.Warning("CZ_SKILL_CELL_LIST: User '{0}' tried to select cells for a skill they don't have ({1}) or he is not casting any skills.", conn.Account.Name, skillId);
+				return;
+			}
+
+			var unknowShort = packet.GetShort();
+			var position = packet.GetPosition();
+			var direction = packet.GetDirection();
+			var cellCount = packet.GetInt();
+
+			var skillCells = new List<SkillCell>();
+			var forward = character.Direction;
+			var left = character.Direction.Left;
+
+			Position? previousPosition = null;
+			var currentDirection = forward;
+
+			for (var i = 0; i < cellCount; ++i)
+			{
+				var cellX = packet.GetInt(); // -1, 0, 1, ...
+				var cellZ = packet.GetInt(); // 0, 1, 2, ...
+
+				var characterPos = character.Position.GetRelative2D(forward, 20);
+
+				// Move forward first
+				var forwardPos = characterPos.GetRelative2D(forward, cellZ * 15);
+
+				// Then shift sideways (negative for right, positive for left)
+				var finalPos = forwardPos.GetRelative2D(left, -cellX * 15);
+
+				// Adjust height
+				if (character.Map.Ground.TryGetHeightAt(finalPos, out var height))
+					finalPos.Y = height;
+
+				// Determine direction between previous and current cell
+				if (previousPosition is not null)
+				{
+					var delta = finalPos.GetDirection(previousPosition.Value); // from previous to current
+					currentDirection = delta;
+				}
+				else
+				{
+					// First cell
+					currentDirection = forward;
+				}
+
+				skillCells.Add(new SkillCell(finalPos, new Direction(currentDirection.DegreeAngle - 90)));
+				previousPosition = finalPos;
+			}
+
+			if (skillCells.Count > 12)
+			{
+				Log.Warning("CZ_SKILL_CELL_LIST: User '{0}' tried to select too many cells for casting a skill.", conn.Account.Name, skillId);
+				return;
+			}
+
+			skill.Vars.Set("Melia.ToolCellPositions", skillCells);			
 		}
 	}
 }

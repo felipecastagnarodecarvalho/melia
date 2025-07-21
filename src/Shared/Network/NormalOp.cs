@@ -53,6 +53,7 @@ namespace Melia.Shared.Network
 			public const int UnkDynamicCastEnd = 0x50;
 			public const int PadUpdate = 0x59;
 			public const int PadSetMonsterAltitude = 0x5C;
+			public const int PadRelatedUnknow = 0x5D;
 			public const int ParticleEffect = 0x61;
 			public const int PadMoveTo = 0x64;
 			public const int Cutscene = 0x6B;

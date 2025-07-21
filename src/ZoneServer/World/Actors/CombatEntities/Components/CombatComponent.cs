@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Melia.Shared.Game.Const;
 using Melia.Zone.Network;
 using Yggdrasil.Scheduling;
 
@@ -26,7 +27,12 @@ namespace Melia.Zone.World.Actors.CombatEntities.Components
 		/// <summary>
 		/// Returns the entity's casting state.
 		/// </summary>
-		public bool CastingState { get; set; }
+		public bool CastingState { get; private set; }
+
+		/// <summary>
+		/// Returns the entity's casting state.
+		/// </summary>
+		public SkillId CastingSkillId { get; private set; } = SkillId.None;
 
 		/// <summary>
 		/// Returns the entity's guarding state.
@@ -127,6 +133,15 @@ namespace Melia.Zone.World.Actors.CombatEntities.Components
 			}
 
 			return null;
+		}
+
+		public void SetCastingState(SkillId castingSkillId, bool value)
+		{
+			CastingState = value;
+			if (value)
+				this.CastingSkillId = castingSkillId;
+			else
+				this.CastingSkillId = SkillId.None;
 		}
 
 		/// <summary>

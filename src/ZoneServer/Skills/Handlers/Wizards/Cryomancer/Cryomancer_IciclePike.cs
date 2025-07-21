@@ -1,5 +1,4 @@
 ﻿using System;
-using Melia.Shared.Data.Database;
 using Melia.Shared.Game.Const;
 using Melia.Shared.L10N;
 using Melia.Shared.World;
@@ -11,7 +10,7 @@ using Melia.Zone.World.Actors;
 using Yggdrasil.Util;
 using static Melia.Zone.Skills.SkillUseFunctions;
 
-namespace Melia.Zone.Skills.Handlers.Archers.Cryomancer
+namespace Melia.Zone.Skills.Handlers.Wizards.Cryomancer
 {
 	/// <summary>
 	/// Handler for the Archer skill Ice Pike.
@@ -45,28 +44,33 @@ namespace Melia.Zone.Skills.Handlers.Archers.Cryomancer
 		/// <param name="target"></param>
 		public void Handle(Skill skill, ICombatEntity caster, Position originPos, Position farPos, ICombatEntity target)
 		{
+			if (!skill.Vars.TryGet<Position>("Melia.ToolGroundPos", out var targetPos))
+			{
+				caster.ServerMessage(Localization.Get("No target location specified."));
+				return;
+			}
+
+			if (!caster.InSkillUseRange(skill, targetPos))
+			{
+				caster.ServerMessage(Localization.Get("Too far away."));
+				return;
+			}
+
 			if (!caster.TrySpendSp(skill))
 			{
 				caster.ServerMessage(Localization.Get("Not enough SP."));
 				return;
 			}
 
-			if (!caster.InSkillUseRange(skill, farPos))
-			{
-				caster.ServerMessage(Localization.Get("Too far away."));
-				return;
-			}
-
-			originPos = caster.Position;
 			skill.IncreaseOverheat();
-			caster.TurnTowards(farPos);
+			caster.TurnTowards(targetPos);
 			caster.SetAttackState(true);
 
-			var splashArea = new Circle(farPos, 100);
+			var splashArea = new Circle(targetPos, 100);
 
-			Send.ZC_SKILL_READY(caster, skill, farPos, Position.Zero);
-			Send.ZC_SKILL_MELEE_GROUND(caster, skill, farPos, null);
-			Send.ZC_NORMAL.UpdateSkillEffect(caster, 0, farPos, caster.Position.GetDirection(farPos), Position.Zero);
+			Send.ZC_SKILL_READY(caster, skill, targetPos, Position.Zero);
+			Send.ZC_SKILL_MELEE_GROUND(caster, skill, targetPos, null);
+			Send.ZC_NORMAL.UpdateSkillEffect(caster, 0, targetPos, caster.Position.GetDirection(targetPos), Position.Zero);
 
 			this.Attack(skill, caster, splashArea);
 		}
@@ -95,6 +99,7 @@ namespace Melia.Zone.Skills.Handlers.Archers.Cryomancer
 				if (RandomProvider.Get().Next(100) < FreezeChange)
 					target.StartBuff(BuffId.Cryomancer_Freeze, skill.Level, 0, TimeSpan.FromSeconds(5), caster);
 
+				Send.ZC_NORMAL.PlayEffect(target, "E_wizard_refrigerwaves_shot_ground_new", 1, EffectLocation.Bottom);
 				Send.ZC_HIT_INFO(caster, target, hit);
 			}
 		}

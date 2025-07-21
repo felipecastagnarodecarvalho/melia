@@ -313,7 +313,7 @@ namespace Melia.Zone.World.Actors.Monsters
 			this.Died?.Invoke(this, killer);
 			ZoneServer.Instance.ServerEvents.EntityKilled.Raise(new CombatEventArgs(this, killer));
 
-			Send.ZC_DEAD(this);
+			Send.ZC_DEAD(this, true);
 		}
 
 		/// <summary>

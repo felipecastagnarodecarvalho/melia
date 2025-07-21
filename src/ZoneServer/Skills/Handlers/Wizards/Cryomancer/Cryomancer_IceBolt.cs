@@ -14,7 +14,7 @@ using Yggdrasil.Util;
 using static Melia.Shared.Util.TaskHelper;
 using static Melia.Zone.Skills.SkillUseFunctions;
 
-namespace Melia.Zone.Skills.Handlers.Archers.Cryomancer
+namespace Melia.Zone.Skills.Handlers.Wizards.Cryomancer
 {
 	/// <summary>
 	/// Handler for the Archer skill Ice Bolt.

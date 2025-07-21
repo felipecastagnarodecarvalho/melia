@@ -275,14 +275,20 @@ namespace Melia.Zone.World.Actors
 		/// Sets the entity's casting state.
 		/// </summary>
 		/// <param name="inCastingState"></param>
-		public static void SetCastingState(this ICombatEntity entity, bool inCastingState)
-			=> entity.Components.Get<CombatComponent>().CastingState = inCastingState;
+		public static void SetCastingState(this ICombatEntity entity, bool inCastingState, SkillId skillId)
+			=> entity.Components.Get<CombatComponent>().SetCastingState(skillId, inCastingState);
 
 		/// <summary>
 		/// Gets the entity's casting state.
 		/// </summary>
 		public static bool IsCasting(this ICombatEntity entity)
 			=> entity.Components.Get<CombatComponent>().CastingState;
+
+		/// <summary>
+		/// Gets the entity's casting state.
+		/// </summary>
+		public static SkillId GetCastingSkillId(this ICombatEntity entity)
+			=> entity.Components.Get<CombatComponent>().CastingSkillId;
 
 		/// <summary>
 		/// Stops entity's current movement.

@@ -425,6 +425,25 @@ namespace Melia.Zone.Network
 			}
 
 			/// <summary>
+			/// Unknow purposes, related to Pads.
+			/// </summary>
+			/// <remarks>
+			/// Used in Cryomancer IceWall skill.
+			/// </remarks>
+			/// <param name="pad"></param>
+			public static void PadRelatedUnknow(Pad pad)
+			{
+				var packet = new Packet(Op.ZC_NORMAL);
+				packet.PutInt(NormalOp.Zone.PadRelatedUnknow);
+
+				packet.PutInt(pad.Handle);
+				packet.PutInt(0);
+				packet.PutInt(0);
+
+				pad.Map.Broadcast(packet);
+			}
+			
+			/// <summary>
 			/// Moves pad to the position on clients around it.
 			/// </summary>
 			/// <param name="caster"></param>

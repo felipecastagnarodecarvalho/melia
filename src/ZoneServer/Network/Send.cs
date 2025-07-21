@@ -1787,12 +1787,12 @@ namespace Melia.Zone.Network
 		/// Makes actor appear dead on all clients in range of it.
 		/// </summary>
 		/// <param name="actor"></param>
-		public static void ZC_DEAD(IActor actor)
+		public static void ZC_DEAD(IActor actor, bool showCorpse = false)
 		{
 			var packet = new Packet(Op.ZC_DEAD);
 
 			packet.PutInt(actor.Handle);
-			packet.PutByte(0);
+			packet.PutByte(showCorpse);
 			packet.PutByte(0); // expInfoCount
 			packet.PutByte(false); // isOverkill
 			packet.PutByte(false); // specialDrop
