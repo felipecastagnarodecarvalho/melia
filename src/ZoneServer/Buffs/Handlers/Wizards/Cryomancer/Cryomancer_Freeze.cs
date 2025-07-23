@@ -15,22 +15,28 @@ namespace Melia.Zone.Buffs.Handlers.Common
 	public class Cryomancer_Freeze : BuffHandler, IBuffCombatDefenseBeforeCalcHandler
 	{
 		/// <summary>
-		/// Starts buff, increasing dodge rate.
+		/// Starts buff activation.
 		/// </summary>
 		/// <param name="buff"></param>
 		public override void OnActivate(Buff buff, ActivationType activationType)
 		{
-			buff.Target.AddState(StateType.Stunned, buff.Duration);
+			if (buff.Target.IsBuffActive(BuffId.Igloo_FreezeImmune_Buff))
+				return;
+
+			buff.Target.AddState(StateType.Frozen, buff.Duration);
 			Send.ZC_NORMAL.UpdateModelEffect(buff.Target, "Freeze", "Cryomancer_Freeze", buff.Duration.Milliseconds);
 		}
 
 		/// <summary>
-		/// Ends the buff, resetting dodge rate.
+		/// Ends the buff.
 		/// </summary>
 		/// <param name="buff"></param>
 		public override void OnEnd(Buff buff)
 		{
-			buff.Target.RemoveState(StateType.Stunned);
+			if (buff.Target.IsBuffActive(BuffId.Igloo_FreezeImmune_Buff))
+				return;
+
+			buff.Target.RemoveState(StateType.Frozen);
 			Send.ZC_NORMAL.UpdateModelEffect(buff.Target, "Freeze", "Cryomancer_Freeze", 0);
 		}
 

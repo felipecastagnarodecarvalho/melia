@@ -3178,7 +3178,7 @@ namespace Melia.Zone.Network
 				previousPosition = finalPos;
 			}
 
-			if (skillCells.Count > 12)
+			if (skillCells.Count > 17)
 			{
 				Log.Warning("CZ_SKILL_CELL_LIST: User '{0}' tried to select too many cells for casting a skill.", conn.Account.Name, skillId);
 				return;

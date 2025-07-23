@@ -22,7 +22,7 @@ namespace Melia.Zone.Skills.Handlers.Wizards.Cryomancer
 	[SkillHandler(SkillId.Cryomancer_IceBolt)]
 	public class Cryomancer_IceBolt : ITargetSkillHandler, IDynamicCasted
 	{
-		private const int FreezeChange = 30;
+		private const int BaseFreezeChange = 30;
 
 		/// <summary>
 		/// Called when the user starts casting the skill.
@@ -121,7 +121,7 @@ namespace Melia.Zone.Skills.Handlers.Wizards.Cryomancer
 				hit.ForceId = ForceId.GetNew();
 				hit.ResultType = HitResultType.Unk16;
 
-				if (RandomProvider.Get().Next(100) < FreezeChange)
+				if (RandomProvider.Get().Next(100) < this.GetFreezingChance(caster))
 					target.StartBuff(BuffId.Cryomancer_Freeze, skill.Level, 0, TimeSpan.FromSeconds(5), caster);
 
 				Send.ZC_NORMAL.PlayForceEffect(hit.ForceId, caster, caster, target, "I_force110_ice", 0.5f, null, null, 0, null, "SLOW", 300);
@@ -134,5 +134,18 @@ namespace Melia.Zone.Skills.Handlers.Wizards.Cryomancer
 			Send.ZC_NORMAL.Skill_46(caster, skill.Id);
 			Send.ZC_NORMAL.SkillCancelCancel(caster, skill.Id);
 		}
+
+		/// <summary>
+		/// Returns the freezing chance.
+		/// </summary>
+		/// <param name="caster"></param>
+		private int GetFreezingChance(ICombatEntity caster)
+		{
+			// Cryomancer: Freeze Speciality
+			caster.TryGetAbility(AbilityId.Cryomancer9, out var abilityFreezeSpecialist);
+			// Ice Bolt: Chance of Freeze
+			caster.TryGetAbility(AbilityId.Cryomancer2, out var abilityChanceOfFreze);
+			return Math.Min(100, BaseFreezeChange + (abilityFreezeSpecialist != null ? abilityFreezeSpecialist.Level * 5 : 0) + (abilityChanceOfFreze != null ? abilityChanceOfFreze.Level * 10 : 0));
+		}		
 	}
 }

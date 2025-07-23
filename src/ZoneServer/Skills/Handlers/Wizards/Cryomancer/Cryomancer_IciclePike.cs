@@ -18,7 +18,7 @@ namespace Melia.Zone.Skills.Handlers.Wizards.Cryomancer
 	[SkillHandler(SkillId.Cryomancer_IciclePike)]
 	public class Cryomancer_IciclePike : IGroundSkillHandler, IDynamicCasted
 	{
-		private const int FreezeChange = 50;
+		private const int BaseFreezeChange = 50;
 
 		/// <summary>
 		/// Called when the user starts casting the skill.
@@ -96,12 +96,23 @@ namespace Melia.Zone.Skills.Handlers.Wizards.Cryomancer
 				hit.ForceId = ForceId.GetNew();
 				hit.ResultType = HitResultType.Unk16;
 
-				if (RandomProvider.Get().Next(100) < FreezeChange)
+				if (RandomProvider.Get().Next(100) < this.GetFreezingChance(caster))
 					target.StartBuff(BuffId.Cryomancer_Freeze, skill.Level, 0, TimeSpan.FromSeconds(5), caster);
 
 				Send.ZC_NORMAL.PlayEffect(target, "E_wizard_refrigerwaves_shot_ground_new", 1, EffectLocation.Bottom);
 				Send.ZC_HIT_INFO(caster, target, hit);
 			}
+		}
+
+		/// <summary>
+		/// Returns the freezing chance.
+		/// </summary>
+		/// <param name="caster"></param>
+		private int GetFreezingChance(ICombatEntity caster)
+		{
+			// Cryomancer: Freeze Speciality
+			caster.TryGetAbility(AbilityId.Cryomancer9, out var ability);
+			return BaseFreezeChange + (ability != null ? ability.Level * 5 : 0);
 		}
 	}
 }

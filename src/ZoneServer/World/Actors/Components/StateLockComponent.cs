@@ -52,6 +52,7 @@ namespace Melia.Zone.World.Actors.Components
 			this.RegisterState(new(StateType.KnockedBack, [LockType.Movement, LockType.Attack]));
 			this.RegisterState(new(StateType.KnockedDown, [LockType.Movement, LockType.Attack, LockType.GetKnockedBack]));
 			this.RegisterState(new(StateType.Held, [LockType.Movement]));
+			this.RegisterState(new(StateType.Frozen, [LockType.Movement, LockType.Attack]));
 		}
 
 		/// <summary>
@@ -340,6 +341,7 @@ namespace Melia.Zone.World.Actors.Components
 		public const string KnockedBack = nameof(KnockedBack);
 		public const string KnockedDown = nameof(KnockedDown);
 		public const string Held = nameof(Held);
+		public const string Frozen = nameof(Frozen);
 	}
 
 	/// <summary>

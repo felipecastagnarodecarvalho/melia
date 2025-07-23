@@ -20,10 +20,13 @@ namespace Melia.Zone.Skills.Handlers.Wizards.Cryomancer
 	/// <summary>
 	/// Handler for the Archer skill Ice Wall.
 	/// </summary>
+	/// <remarks>
+	/// TODO: Implement the sub-attack feature - once the caster attacks the ice wall it should spread particles that damage enemies.
+	/// </remarks>
 	[SkillHandler(SkillId.Cryomancer_IceWall)]
 	public class Cryomancer_IceWall : IGroundSkillHandler, IDynamicCasted
 	{
-		private const int FreezeChange = 60;
+		private const int BaseFreezeChange = 60;
 
 		/// <summary>
 		/// Called when the user starts casting the skill.
@@ -69,7 +72,11 @@ namespace Melia.Zone.Skills.Handlers.Wizards.Cryomancer
 				return;
 			}
 
-			farPos = skillCells[0].Position;
+			// [Arts] Ice Wall: Magic Igloo - Used at caster position
+			if (caster.IsAbilityActive(AbilityId.Cryomancer26))
+				farPos = caster.Position;
+			else
+				farPos = skillCells[0].Position;
 
 			if (!caster.InSkillUseRange(skill, farPos))
 			{
@@ -92,10 +99,34 @@ namespace Melia.Zone.Skills.Handlers.Wizards.Cryomancer
 			Send.ZC_NORMAL.UpdateSkillEffect(caster, 0, farPos, caster.Position.GetDirection(farPos), Position.Zero);
 			Send.ZC_SKILL_MELEE_GROUND(caster, skill, farPos, null);
 
-			foreach (var skillCell in skillCells)
+			var duration = TimeSpan.FromSeconds(15);
+
+			if (caster.IsAbilityActive(AbilityId.Cryomancer22))
+				duration += TimeSpan.FromSeconds(10);
+
+			// [Arts] Ice Wall: Magic Igloo - Spawns Igloo at caster position that gives freeze immunity to nearby allies.
+			if (caster.IsAbilityActive(AbilityId.Cryomancer26))
 			{
-				this.SpawnIceWallEntity(caster, skill, skillCell.Position, skillCell.Direction);
+				var pad = new Pad(PadName.Cryomancer_Igloo, caster, skill, new Circle(caster.Position, 55));
+				pad.Position = caster.Position;
+				pad.Direction = caster.Direction;
+				pad.Trigger.LifeTime = duration;
+				pad.Trigger.MaxActorCount = 12;
+				pad.Trigger.UpdateInterval = TimeSpan.FromMilliseconds(200);
+				pad.Trigger.Subscribe(TriggerType.Enter, this.OnIglooTriggerEnter);
+				pad.Trigger.Subscribe(TriggerType.Leave, this.OnIglooTriggerLeave);
+
+				caster.Map.AddPad(pad);
+			} else
+			{
+				// Default cast - Spawns Ice Walls for each cell
+				foreach (var skillCell in skillCells)
+				{
+					this.SpawnIceWallEntity(caster, skill, skillCell.Position, skillCell.Direction, duration);
+				}
 			}
+
+
 
 			caster.SetCastingState(false, SkillId.None);
 		}
@@ -105,12 +136,12 @@ namespace Melia.Zone.Skills.Handlers.Wizards.Cryomancer
 		/// </summary>
 		/// <param name="skill"></param>
 		/// <param name="caster"></param>
-		private void SpawnIceWallEntity(ICombatEntity caster, Skill skill, Position position, Direction direction)
+		private void SpawnIceWallEntity(ICombatEntity caster, Skill skill, Position position, Direction direction, TimeSpan duration)
 		{
 			var pad = new Pad(PadName.Cryomancer_IceWall, caster, skill, new Square(position, direction, 25, 25));
 			pad.Position = position;
 			pad.Direction = direction;
-			pad.Trigger.LifeTime = TimeSpan.FromSeconds(15);
+			pad.Trigger.LifeTime = duration;
 			pad.Trigger.MaxActorCount = 5;
 			pad.Trigger.UpdateInterval = TimeSpan.FromMilliseconds(200);
 			pad.Trigger.Subscribe(TriggerType.Enter, this.OnIceWallTriggerEnter);
@@ -126,23 +157,22 @@ namespace Melia.Zone.Skills.Handlers.Wizards.Cryomancer
 			caster.Map.AddMonster(iceWallEntity);
 			Send.ZC_NORMAL.Unk13E(iceWallEntity, true);
 
-			TaskHelper.CallSafe(this.DestroyWallEntity(caster, iceWallEntity));
+			TaskHelper.CallSafe(this.DestroyWallEntity(caster, iceWallEntity, duration));
 		}
 
 		/// <summary>
 		/// Destroy wall after a while.
 		/// </summary>
 		/// <param name="iceWallEntity"></param>
-		private async Task DestroyWallEntity(ICombatEntity caster, Mob iceWallEntity)
+		private async Task DestroyWallEntity(ICombatEntity caster, Mob iceWallEntity, TimeSpan duration)
 		{
-			var wallDuration = TimeSpan.FromSeconds(15);
-			await Task.Delay(wallDuration);
+			await Task.Delay(duration);
 			iceWallEntity.Kill(caster);
 			Send.ZC_NORMAL.ClearEffects(iceWallEntity);
 		}
 
 		/// <summary>
-		/// Called by the pad when anything enters.
+		/// Called by the ice wall pad when anything enters.
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="args"></param>
@@ -163,8 +193,68 @@ namespace Melia.Zone.Skills.Handlers.Wizards.Cryomancer
 			if (mob.Data.Id == 47452)
 				return;
 
-			if (RandomProvider.Get().Next(100) < FreezeChange)
+			if (RandomProvider.Get().Next(100) < this.GetFreezingChance(creator))
 				target.StartBuff(BuffId.Cryomancer_Freeze, skill.Level, 0, TimeSpan.FromSeconds(5), creator);
+		}
+
+		/// <summary>
+		/// Called by the Igloo pad when anything enters.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
+		private void OnIglooTriggerEnter(object sender, PadTriggerActorArgs args)
+		{
+			var pad = args.Trigger;
+			var creator = args.Creator;
+			var target = args.Initiator;
+			var skill = args.Skill;
+
+			if (pad.Trigger.AtCapacity)
+				return;
+
+			if (creator.CanAttack(target))
+				return;
+
+			var duration = TimeSpan.FromSeconds(15);
+
+			if (creator.IsAbilityActive(AbilityId.Cryomancer22))
+				duration += TimeSpan.FromSeconds(10);
+
+			if (!target.IsBuffActive(BuffId.Igloo_FreezeImmune_Buff))
+				target.StartBuff(BuffId.Igloo_FreezeImmune_Buff, skill.Level, 0, duration, creator);
+		}
+
+		/// <summary>
+		/// Called when an actor leaves the Igloo pad.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
+		private void OnIglooTriggerLeave(object sender, PadTriggerActorArgs args)
+		{ 
+			var pad = args.Trigger;
+			var creator = args.Creator;
+			var target = args.Initiator;
+			var skill = args.Skill;
+
+			if (pad.Trigger.AtCapacity)
+				return;
+
+			if (creator.CanAttack(target))
+				return;
+
+			if (target.IsBuffActive(BuffId.Igloo_FreezeImmune_Buff))
+				target.StopBuff(BuffId.Igloo_FreezeImmune_Buff);
+		}
+
+		/// <summary>
+		/// Returns the freezing chance.
+		/// </summary>
+		/// <param name="caster"></param>
+		private int GetFreezingChance(ICombatEntity caster)
+		{
+			// Cryomancer: Freeze Speciality
+			caster.TryGetAbility(AbilityId.Cryomancer9, out var ability);
+			return BaseFreezeChange + (ability != null ? ability.Level * 5 : 0);
 		}
 	}
 }
