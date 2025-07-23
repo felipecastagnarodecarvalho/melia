@@ -32,8 +32,6 @@ namespace Melia.Zone.Skills.Handlers.Wizards.Cryomancer
 		/// <param name="caster"></param>
 		public void StartDynamicCast(Skill skill, ICombatEntity caster)
 		{
-			skill.Vars.SetString("StartCastingTime", DateTime.Now.ToLongTimeString());
-
 			if (caster is not Character casterCharacter)
 				return;
 
@@ -48,21 +46,10 @@ namespace Melia.Zone.Skills.Handlers.Wizards.Cryomancer
 		/// <param name="caster"></param>
 		public void EndDynamicCast(Skill skill, ICombatEntity caster)
 		{
-			if (caster is not Character casterCharacter || skill.Vars.GetString("StartCastingTime") == null)
+			if (caster is not Character casterCharacter)
 				return;
 
-			// Parse saved time
-			var parsedTime = DateTime.ParseExact(
-				skill.Vars.GetString("StartCastingTime"),
-				CultureInfo.CurrentCulture.DateTimeFormat.LongTimePattern,
-				CultureInfo.CurrentCulture);
-
-			// Combine with today's date to get full DateTime
-			var startCastingTime = DateTime.Today.Add(parsedTime.TimeOfDay);
-			var elapsed = DateTime.Now - startCastingTime;
-			var castTimeSeconds = (float)elapsed.TotalSeconds;
-
-			Send.ZC_NORMAL.UnkDynamicCastEnd(casterCharacter, skill.Id, castTimeSeconds);
+			Send.ZC_NORMAL.UnkDynamicCastEnd(casterCharacter, skill.Id, 2);
 			Send.ZC_STOP_SOUND_Gendered(caster, "voice_wiz_m_icewall_cast", "voice_wiz_icewall_cast");
 		}
 
@@ -120,7 +107,7 @@ namespace Melia.Zone.Skills.Handlers.Wizards.Cryomancer
 		/// <param name="caster"></param>
 		private void SpawnIceWallEntity(ICombatEntity caster, Skill skill, Position position, Direction direction)
 		{
-			var pad = new Pad(PadName.Cryomancer_IceWall, caster, skill, new Square(position, direction, 20, 20));
+			var pad = new Pad(PadName.Cryomancer_IceWall, caster, skill, new Square(position, direction, 25, 25));
 			pad.Position = position;
 			pad.Direction = direction;
 			pad.Trigger.LifeTime = TimeSpan.FromSeconds(15);

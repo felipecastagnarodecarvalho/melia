@@ -14,14 +14,28 @@ namespace Melia.Zone.Buffs.Handlers.Common
 	[BuffHandler(BuffId.Cryomancer_Freeze)]
 	public class Cryomancer_Freeze : BuffHandler, IBuffCombatDefenseBeforeCalcHandler
 	{
-		public override void OnExtend(Buff buff)
+		/// <summary>
+		/// Starts buff, increasing dodge rate.
+		/// </summary>
+		/// <param name="buff"></param>
+		public override void OnActivate(Buff buff, ActivationType activationType)
 		{
 			buff.Target.AddState(StateType.Stunned, buff.Duration);
 			Send.ZC_NORMAL.UpdateModelEffect(buff.Target, "Freeze", "Cryomancer_Freeze", buff.Duration.Milliseconds);
 		}
 
 		/// <summary>
-		/// Applies the debuff's effect during the combat calculations.
+		/// Ends the buff, resetting dodge rate.
+		/// </summary>
+		/// <param name="buff"></param>
+		public override void OnEnd(Buff buff)
+		{
+			buff.Target.RemoveState(StateType.Stunned);
+			Send.ZC_NORMAL.UpdateModelEffect(buff.Target, "Freeze", "Cryomancer_Freeze", 0);
+		}
+
+		/// <summary>
+		/// Change the Defense Attribute to Ice.
 		/// </summary>
 		/// <param name="buff"></param>
 		/// <param name="attacker"></param>

@@ -207,6 +207,20 @@ namespace Melia.Zone.Skills
 		}
 
 		/// <summary>
+		/// Some skills have different OverheatCounter depending if an Ability is active.
+		/// </summary>
+		/// <param name="overheatCount"></param>
+		/// <returns
+		public void SetOverheat(int overheatCount)
+		{
+			if (this.IsOnCooldown)
+				return;
+
+			this.Data.OverheatCount = overheatCount;
+			this.OverheatCounter = overheatCount;
+		}
+
+		/// <summary>
 		/// Resets the skill's overheat and puts it on a cooldown that lasts
 		/// for the given amount of time.
 		/// </summary>

@@ -66,7 +66,7 @@ namespace Melia.Zone.World.Actors.CombatEntities.Components
 		}
 
 		/// <summary>
-		/// 
+		/// Updates object.
 		/// </summary>
 		/// <param name="elapsed"></param>
 		/// <exception cref="NotImplementedException"></exception>
@@ -138,10 +138,7 @@ namespace Melia.Zone.World.Actors.CombatEntities.Components
 		public void SetCastingState(SkillId castingSkillId, bool value)
 		{
 			CastingState = value;
-			if (value)
-				this.CastingSkillId = castingSkillId;
-			else
-				this.CastingSkillId = SkillId.None;
+			this.CastingSkillId = value ? castingSkillId : SkillId.None;
 		}
 
 		/// <summary>

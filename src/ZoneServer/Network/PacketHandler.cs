@@ -218,7 +218,18 @@ namespace Melia.Zone.Network
 			// does, but the data is necessary for the client to display the
 			// overheat bubbles on the skill icons, so we'll send the skills
 			// that have an overheat count.
-			var skillUpdateList = character.Skills.GetList(a => a.Data.OverheatCount > 0);
+			var skillUpdateList = character.Skills.GetList(a => a.Data.OverheatCount > 0 || a.Data.Id == SkillId.Cryomancer_IceBlast);
+
+			// We are hard-coding this for now.
+			// TODO: find out a better place to place it.
+			if (character.IsAbilityActive(AbilityId.Cryomancer24))
+			{
+				var iceBlastSkill = skillUpdateList.Where(a => a.Data.Id == SkillId.Cryomancer_IceBlast).FirstOrDefault();
+
+				if (iceBlastSkill != null)				
+					iceBlastSkill.SetOverheat(0);				
+			}
+
 			Send.ZC_UPDATE_SKL_SPDRATE_LIST(character, skillUpdateList);
 
 			// Send updates for the buffs loaded from db, so the client
@@ -2683,6 +2694,22 @@ namespace Melia.Zone.Network
 			}
 
 			ability.Active = !ability.Active;
+
+			// TODO: Find a better place to implement this.
+			if (ability.Id == AbilityId.Cryomancer24)
+			{
+				var skillUpdateList = character.Skills.GetList(a => a.Data.OverheatCount > 0 || a.Data.Id == SkillId.Cryomancer_IceBlast);
+				var iceBlastSkill = skillUpdateList.Where(a => a.Data.Id == SkillId.Cryomancer_IceBlast).FirstOrDefault();
+
+				if (iceBlastSkill == null || iceBlastSkill.IsOnCooldown)
+				{
+					character.ServerMessage(Localization.Get("You are not allowed to active this ability now."));
+					return;
+				}
+
+				iceBlastSkill.SetOverheat(ability.Active ? 0 : 2);
+				Send.ZC_UPDATE_SKL_SPDRATE_LIST(character, skillUpdateList);
+			}
 
 			Send.ZC_OBJECT_PROPERTY(conn, ability, PropertyName.ActiveState);
 			Send.ZC_ADDON_MSG(character, "RESET_ABILITY_ACTIVE", ability.Active ? 1 : 0, ability.Data.ClassName);

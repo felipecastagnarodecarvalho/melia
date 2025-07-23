@@ -16,7 +16,7 @@ using static Melia.Zone.Skills.SkillUseFunctions;
 namespace Melia.Zone.Skills.Handlers.Clerics.Cleric
 {
 	/// <summary>
-	/// Handler for the Swordsman skill Thrust.
+	/// Handler for the Cleric skill Smite.
 	/// </summary>
 	[SkillHandler(SkillId.Cleric_Smite)]
 	public class Cleric_Smite : IGroundSkillHandler
@@ -28,6 +28,7 @@ namespace Melia.Zone.Skills.Handlers.Clerics.Cleric
 		/// <param name="caster"></param>
 		/// <param name="originPos"></param>
 		/// <param name="farPos"></param>
+		/// <param name="target"></param>
 		public void Handle(Skill skill, ICombatEntity caster, Position originPos, Position farPos, ICombatEntity target)
 		{
 			if (!caster.TrySpendSp(skill))

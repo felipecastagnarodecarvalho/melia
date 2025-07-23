@@ -544,4 +544,20 @@ public class AbilityUnlockedFunctionsScript : GeneralScript
 
 		return (skill != null && character.Level >= minLevel);
 	}
+
+	/// <summary>
+	/// Unlocks at a given base level.
+	/// </summary>
+	/// <param name="character"></param>
+	/// <param name="argStr"></param>
+	/// <param name="minLevel"></param>
+	/// <param name="data"></param>
+	/// <returns></returns>
+	[ScriptableFunction]
+	public static bool UNLOCK_BASE_LEVEL(Character character, string argStr, int minLevel, AbilityData data)
+	{
+		var level = character.Level;
+
+		return (level >= minLevel);
+	}
 }

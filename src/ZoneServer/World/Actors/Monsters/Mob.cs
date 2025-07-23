@@ -5,7 +5,6 @@ using Melia.Shared.Data.Database;
 using Melia.Shared.Game.Const;
 using Melia.Shared.ObjectProperties;
 using Melia.Shared.World;
-using Melia.Zone.Buffs;
 using Melia.Zone.Buffs.Handlers.Common;
 using Melia.Zone.Buffs.Handlers.Scouts.Assassin;
 using Melia.Zone.Events.Arguments;
