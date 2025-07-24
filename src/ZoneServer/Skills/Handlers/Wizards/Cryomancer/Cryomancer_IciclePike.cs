@@ -13,7 +13,7 @@ using static Melia.Zone.Skills.SkillUseFunctions;
 namespace Melia.Zone.Skills.Handlers.Wizards.Cryomancer
 {
 	/// <summary>
-	/// Handler for the Archer skill Ice Pike.
+	/// Handler for the Cryomancer skill Ice Pike.
 	/// </summary>
 	[SkillHandler(SkillId.Cryomancer_IciclePike)]
 	public class Cryomancer_IciclePike : IGroundSkillHandler, IDynamicCasted

@@ -1204,10 +1204,10 @@ namespace Melia.Zone.Network
 			/// </summary>
 			/// <param name="entity"></param>
 			/// <param name="b1"></param>
-			public static void Unk13E(ICombatEntity entity, bool b1)
+			public static void Skill_13E(ICombatEntity entity, bool b1)
 			{
 				var packet = new Packet(Op.ZC_NORMAL);
-				packet.PutInt(NormalOp.Zone.Unk13E);
+				packet.PutInt(NormalOp.Zone.Skill_13E);
 
 				packet.PutInt(entity.Handle);
 				packet.PutByte(b1);
@@ -1430,6 +1430,163 @@ namespace Melia.Zone.Network
 
 				actor.Map.Broadcast(packet);
 			}
+
+			/// <summary>
+			/// Disable Regular Skills Usage, Displaying only the skillId choosen.
+			/// </summary>
+			/// <param name="character"></param>
+			/// <param name="packetString"></param>
+			/// <param name="skillId></param>
+			public static void DisableRegularSkills(Character character, string packetString, SkillId skillId)
+			{
+				var packet = new Packet(Op.ZC_NORMAL);
+				packet.PutInt(NormalOp.Zone.DisableRegularSkills);
+
+				packet.PutInt(character.Handle);
+				packet.PutLpString(packetString);
+				packet.PutInt((int)skillId);
+
+				character.Connection.Send(packet);
+			}
+
+			/// <summary>
+			/// Disable Regular Skills Usage, Displaying only the skillId choosen.
+			/// </summary>
+			/// <param name="character"></param>
+			/// <param name="packetString"></param>
+			public static void EnableRegularSkills(Character character, string packetString)
+			{
+				var packet = new Packet(Op.ZC_NORMAL);
+				packet.PutInt(NormalOp.Zone.EnableRegularSkills);
+
+				packet.PutInt(character.Handle);
+				packet.PutLpString(packetString);
+
+				character.Connection.Send(packet);
+			}
+			
+
+			/// <summary>
+			/// Update Entity Scale.
+			/// </summary>
+			/// <param name="target"></param>
+			/// <param name="unknowInt"></param>
+			/// <param name="scale"></param>
+			/// <param name="unknowBoolean"></param>
+			/// <param name="unknowShort"></param>
+			public static void UpdateScale(ICombatEntity target, int unknowInt, float scale, bool unknowBoolean, short unknowShort)
+			{
+				var packet = new Packet(Op.ZC_NORMAL);
+				packet.PutInt(NormalOp.Zone.UpdateScale);
+
+				packet.PutInt(target.Handle);
+				packet.PutInt(unknowInt);
+				packet.PutFloat(scale);
+				packet.PutByte(unknowBoolean);
+				packet.PutShort(unknowShort);
+
+				target.Map.Broadcast(packet);
+			}
+
+			/// <summary>
+			/// The actual purpose is unknow, seems to be used for height entity object update.
+			/// It's used on Cryomancer Snow Rolling skill.
+			/// </summary>
+			/// <param name="target"></param>
+			/// <param name="unknowFloat"></param>
+			public static void Skill_B7(ICombatEntity target, float unknowFloat)
+			{
+				var packet = new Packet(Op.ZC_NORMAL);
+				packet.PutInt(NormalOp.Zone.Skill_B7);
+
+				packet.PutInt(target.Handle);
+				packet.PutFloat(unknowFloat);
+				
+				target.Map.Broadcast(packet);
+			}
+
+			/// <summary>
+			/// The actual purpose is unknow, seems to be used for height entity object update.
+			/// It's used on Cryomancer Snow Rolling skill.
+			/// </summary>
+			/// <param name="caster"></param>
+			/// <param name="target"></param>
+			/// <param name="effectName"></param>
+			/// <param name="b1"></param>
+			/// <param name="b2"></param>
+			/// <param name="b3"></param>
+			/// <param name="b4"></param>
+			public static void AttachCasterToSnowBall(ICombatEntity caster, ICombatEntity target, string effectName, bool b1, bool b2, bool b3, bool b4)
+			{
+				var packet = new Packet(Op.ZC_NORMAL);
+				packet.PutInt(NormalOp.Zone.AttachCasterToSnowBall);
+
+				packet.PutInt(caster.Handle);
+				packet.PutInt(target.Handle);
+				packet.PutByte(b1);
+				packet.PutByte(b2);
+				packet.PutByte(b3);
+				packet.AddStringId(effectName);
+				packet.PutByte(b4);
+
+				target.Map.Broadcast(packet);
+			}
+
+			/// <summary>
+			/// The actual purpose is unknow.
+			/// It's used on Cryomancer Snow Rolling skill.
+			/// </summary>
+			/// <param name="target"></param>
+			/// <param name="effectName"></param>
+			public static void Skill_26(ICombatEntity target, string effectName)
+			{
+				var packet = new Packet(Op.ZC_NORMAL);
+				packet.PutInt(NormalOp.Zone.Skill_26);
+
+				packet.PutInt(target.Handle);
+				packet.AddStringId(effectName);
+				packet.PutInt(2);
+				packet.PutInt(4);
+				packet.PutByte(0);
+				packet.PutByte(3);
+				packet.PutFloat(1);
+
+				target.Map.Broadcast(packet);
+			}
+
+			/// <summary>
+			/// The actual purpose is unknow. Seems to be related to summon.
+			/// It's used on Cryomancer Snow Rolling skill.
+			/// </summary>
+			/// <param name="target"></param>
+			/// <param name="unknowFloat"></param>
+			public static void Skill_99(ICombatEntity target, float unknowFloat)
+			{
+				var packet = new Packet(Op.ZC_NORMAL);
+				packet.PutInt(NormalOp.Zone.Skill_99);
+
+				packet.PutInt(target.Handle);
+				packet.PutFloat(unknowFloat);
+
+				target.Map.Broadcast(packet);
+			}
+
+			/// <summary>
+			/// The actual purpose is unknow. 
+			/// It's used on Cryomancer Snow Rolling skill.
+			/// </summary>
+			/// <param name="target"></param>
+			/// <param name="unknowBoolean"></param>
+			public static void Skill_C8(ICombatEntity target, bool unknowBoolean)
+			{
+				var packet = new Packet(Op.ZC_NORMAL);
+				packet.PutInt(NormalOp.Zone.Skill_C8);
+
+				packet.PutInt(target.Handle);
+				packet.PutByte(unknowBoolean);
+
+				target.Map.Broadcast(packet);
+			}			
 		}
 	}
 }

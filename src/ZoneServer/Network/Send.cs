@@ -4550,5 +4550,24 @@ namespace Melia.Zone.Network
 
 			toActor.Map.Broadcast(packet);
 		}
+
+		/// <summary>
+		/// Select an animation for an actor for nearby clients.
+		/// </summary>
+		/// <param name="actor"></param>
+		/// <param name="animationId"></param>
+		public static void ZC_STD_ANIM(IActor actor, int animationId)
+		{
+			var packet = new Packet(Op.ZC_STD_ANIM);
+
+			// Wrong animation Id
+			if (animationId < 0 || animationId > 255)
+				animationId = 0;
+
+			packet.PutInt(actor.Handle);
+			packet.PutByte((byte)animationId);
+
+			actor.Map.Broadcast(packet);
+		}
 	}
 }

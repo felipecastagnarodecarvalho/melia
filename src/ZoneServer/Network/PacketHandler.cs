@@ -3186,5 +3186,83 @@ namespace Melia.Zone.Network
 
 			skill.Vars.Set("Melia.ToolCellPositions", skillCells);			
 		}
+
+		/// <summary>
+		/// Sent when the client is attempting to control the object rotation.
+		/// </summary>
+		/// <remarks>
+		/// Used mainly on Snow Balling Cryomancer Skill.
+		/// </remarks>
+		/// <param name="conn"></param>
+		/// <param name="packet"></param>
+		[PacketHandler(Op.CZ_CONTROL_OBJECT_ROTATE)]
+		public void CZ_CONTROL_OBJECT_ROTATE(IZoneConnection conn, Packet packet)
+		{
+			var objectHandle = packet.GetInt();
+			var direction = packet.GetDirection();
+
+			var character = conn.SelectedCharacter;
+
+			if (!character.Map.TryGetActor(objectHandle, out var actor))
+			{
+				Log.Warning("CZ_CONTROL_OBJECT_ROTATE: User '{0}' tried to control the rotation of an object that doesn't exist (Handle:{1}).", conn.Account.Name, objectHandle);
+				return;
+			}
+
+			if (actor is not Mob actorMob || !actorMob.Components.TryGet<ControllableMovementComponent>(out var controllableMovementComponent))
+			{
+				Log.Warning("CZ_CONTROL_OBJECT_ROTATE: User '{0}' tried to control the rotation of an object that is not a mob (Handle:{1}).", conn.Account.Name, objectHandle);
+				return;
+			}
+
+			if (controllableMovementComponent.ParentOwner.Handle != character.Handle)
+			{
+				Log.Warning("CZ_CONTROL_OBJECT_ROTATE: User '{0}' tried to control the rotation of an object that he is not the owner (Handle:{1}).", conn.Account.Name, objectHandle);
+				return;
+			}
+
+			actorMob.Direction = direction;
+			Send.ZC_ROTATE(actorMob);
+		}
+
+		/// <summary>
+		/// Sent when the client is attempting to control the object position.
+		/// </summary>
+		/// <remarks>
+		/// Used mainly on Snow Balling Cryomancer Skill.
+		/// </remarks>
+		/// <param name="conn"></param>
+		/// <param name="packet"></param>
+		[PacketHandler(Op.CZ_OBJECT_MOVE)]
+		public void CZ_OBJECT_MOVE(IZoneConnection conn, Packet packet)
+		{
+			var junkHandle = packet.GetInt();
+			var junkAttachToHandle = packet.GetInt();
+			var junkPacketString = packet.GetInt();
+			var objectHandle = packet.GetInt();
+			var position = packet.GetPosition();
+
+			var character = conn.SelectedCharacter;
+
+			if (!character.Map.TryGetActor(objectHandle, out var actor))
+			{
+				Log.Warning("CZ_CONTROL_OBJECT_ROTATE: User '{0}' tried to control the rotation of an object that doesn't exist (Handle:{1}).", conn.Account.Name, objectHandle);
+				return;
+			}
+
+			if (actor is not Mob actorMob || !actorMob.Components.TryGet<ControllableMovementComponent>(out var controllableMovementComponent))
+			{
+				Log.Warning("CZ_CONTROL_OBJECT_ROTATE: User '{0}' tried to control the rotation of an object that is not a mob (Handle:{1}).", conn.Account.Name, objectHandle);
+				return;
+			}
+
+			if (controllableMovementComponent.ParentOwner.Handle != character.Handle)
+			{
+				Log.Warning("CZ_CONTROL_OBJECT_ROTATE: User '{0}' tried to control the rotation of an object that he is not the owner (Handle:{1}).", conn.Account.Name, objectHandle);
+				return;
+			}
+
+			controllableMovementComponent.MoveTo(position);			
+		}
 	}
 }

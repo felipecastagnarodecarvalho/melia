@@ -41,6 +41,8 @@ namespace Melia.Shared.Network
 			public const int PlayEffect = 0x16;
 			public const int PlayForceEffect = 0x17;
 			public const int UpdateSkillEffect = 0x1F;
+			public const int Skill_26 = 0x26;
+			public const int UpdateScale = 0x2E;
 			public const int FadeOut = 0x38;
 			public const int BarrackSlotCount = 0x3C;
 			public const int AttackCancel = 0x41;
@@ -61,9 +63,13 @@ namespace Melia.Shared.Network
 			public const int SetHitDelay = 0x78;
 			public const int SkillCancelCancel = 0x7D;
 			public const int SpinObject = 0x8A;
+			public const int Skill_99 = 0x99;
 			public const int OpenBook = 0x9E;
 			public const int Unknown_A1 = 0xA1;
+			public const int AttachCasterToSnowBall = 0xB4;
+			public const int Skill_B7 = 0xB7;
 			public const int LeapJump = 0xC2;
+			public const int Skill_C8 = 0xC8;
 			public const int Unknown_DA = 0xDA;
 			public const int ItemCollectionList = 0xDD;
 			public const int UnlockCollection = 0xDF;
@@ -71,9 +77,11 @@ namespace Melia.Shared.Network
 			public const int PlayTextEffect = 0xE3;
 			public const int Unknown_E4 = 0xE7;
 			public const int Unknown_EF = 0xF2;
+			public const int DisableRegularSkills = 0x10B;
+			public const int EnableRegularSkills = 0x10C;
 			public const int ChannelTraffic = 0x12D;
 			public const int SetGreetingMessage = 0x136;
-			public const int Unk13E = 0x13E;			
+			public const int Skill_13E = 0x13E;
 			public const int UpdateModelEffect = 0x14D;
 			public const int SetSessionKey = 0x14F;
 			public const int ItemDrop = 0x152;

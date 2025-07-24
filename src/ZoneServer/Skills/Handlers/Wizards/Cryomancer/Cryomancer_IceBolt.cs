@@ -17,7 +17,7 @@ using static Melia.Zone.Skills.SkillUseFunctions;
 namespace Melia.Zone.Skills.Handlers.Wizards.Cryomancer
 {
 	/// <summary>
-	/// Handler for the Archer skill Ice Bolt.
+	/// Handler for the Cryomancer skill Ice Bolt.
 	/// </summary>
 	[SkillHandler(SkillId.Cryomancer_IceBolt)]
 	public class Cryomancer_IceBolt : ITargetSkillHandler, IDynamicCasted
@@ -146,6 +146,6 @@ namespace Melia.Zone.Skills.Handlers.Wizards.Cryomancer
 			// Ice Bolt: Chance of Freeze
 			caster.TryGetAbility(AbilityId.Cryomancer2, out var abilityChanceOfFreze);
 			return Math.Min(100, BaseFreezeChange + (abilityFreezeSpecialist != null ? abilityFreezeSpecialist.Level * 5 : 0) + (abilityChanceOfFreze != null ? abilityChanceOfFreze.Level * 10 : 0));
-		}		
+		}
 	}
 }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Threading.Tasks;
 using Melia.Shared.Game.Const;
 using Melia.Shared.L10N;
@@ -18,7 +17,7 @@ using Melia.Shared.Util;
 namespace Melia.Zone.Skills.Handlers.Wizards.Cryomancer
 {
 	/// <summary>
-	/// Handler for the Archer skill Ice Wall.
+	/// Handler for the Cryomancer skill Ice Wall.
 	/// </summary>
 	/// <remarks>
 	/// TODO: Implement the sub-attack feature - once the caster attacks the ice wall it should spread particles that damage enemies.
@@ -126,16 +125,17 @@ namespace Melia.Zone.Skills.Handlers.Wizards.Cryomancer
 				}
 			}
 
-
-
 			caster.SetCastingState(false, SkillId.None);
 		}
 
 		/// <summary>
 		/// Spawns the Ice Wall entity.
 		/// </summary>
-		/// <param name="skill"></param>
 		/// <param name="caster"></param>
+		/// <param name="skill"></param>
+		/// <param name="position"></param>
+		/// <param name="direction"></param>
+		/// <param name="duration"></param>
 		private void SpawnIceWallEntity(ICombatEntity caster, Skill skill, Position position, Direction direction, TimeSpan duration)
 		{
 			var pad = new Pad(PadName.Cryomancer_IceWall, caster, skill, new Square(position, direction, 25, 25));
@@ -155,7 +155,7 @@ namespace Melia.Zone.Skills.Handlers.Wizards.Cryomancer
 			iceWallEntity.Direction = direction;
 
 			caster.Map.AddMonster(iceWallEntity);
-			Send.ZC_NORMAL.Unk13E(iceWallEntity, true);
+			Send.ZC_NORMAL.Skill_13E(iceWallEntity, true);
 
 			TaskHelper.CallSafe(this.DestroyWallEntity(caster, iceWallEntity, duration));
 		}
@@ -163,7 +163,9 @@ namespace Melia.Zone.Skills.Handlers.Wizards.Cryomancer
 		/// <summary>
 		/// Destroy wall after a while.
 		/// </summary>
+		/// <param name="caster"></param>
 		/// <param name="iceWallEntity"></param>
+		/// <param name="duration"></param>
 		private async Task DestroyWallEntity(ICombatEntity caster, Mob iceWallEntity, TimeSpan duration)
 		{
 			await Task.Delay(duration);
