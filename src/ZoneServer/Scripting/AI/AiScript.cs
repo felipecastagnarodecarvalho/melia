@@ -43,6 +43,8 @@ namespace Melia.Zone.Scripting.AI
 
 		private readonly Queue<IAiEventAlert> _eventAlerts = new();
 
+		public bool Suspended { get; set; }
+
 		/// <summary>
 		/// Returns the entity that this script is controlling.
 		/// </summary>
@@ -99,6 +101,9 @@ namespace Melia.Zone.Scripting.AI
 				throw new InvalidOperationException("AI has not been initiated.");
 
 			if (this.Entity.IsDead)
+				return;
+
+			if (this.Suspended)
 				return;
 
 			if (!this.CheckAnyPlayersOnMap())

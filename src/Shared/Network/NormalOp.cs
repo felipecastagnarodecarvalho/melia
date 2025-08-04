@@ -41,8 +41,8 @@ namespace Melia.Shared.Network
 			public const int PlayEffect = 0x16;
 			public const int PlayForceEffect = 0x17;
 			public const int UpdateSkillEffect = 0x1F;
-			public const int Skill_26 = 0x26;
-			public const int UpdateScale = 0x2E;
+			public const int Skill_CallLuaFunc = 0x26;
+			public const int SetScale = 0x2E;
 			public const int FadeOut = 0x38;
 			public const int BarrackSlotCount = 0x3C;
 			public const int AttackCancel = 0x41;
@@ -63,11 +63,11 @@ namespace Melia.Shared.Network
 			public const int SetHitDelay = 0x78;
 			public const int SkillCancelCancel = 0x7D;
 			public const int SpinObject = 0x8A;
-			public const int Skill_99 = 0x99;
+			public const int DelayEnterWorld = 0x99;
 			public const int OpenBook = 0x9E;
 			public const int Unknown_A1 = 0xA1;
-			public const int AttachCasterToSnowBall = 0xB4;
-			public const int Skill_B7 = 0xB7;
+			public const int RideEntity = 0xB4;
+			public const int OffsetY = 0xB7;
 			public const int LeapJump = 0xC2;
 			public const int Skill_C8 = 0xC8;
 			public const int Unknown_DA = 0xDA;

@@ -115,4 +115,16 @@
 	{
 		public const string THEMA_BUY_SUCCESS = "THEMA_BUY_SUCCESS";
 	}
+
+	/// <summary>
+	/// Constant strings sent with `ZC_EXEC_CLIENT_SCP`.
+	/// Representing Lua Functions to call.
+	/// </summary>
+	public static class ClientScripts
+	{
+		/// <summary>
+		/// Update "Follower" List
+		/// </summary>
+		public const string UPDATE_PC_FOLLOWER_LIST = @"UPDATE_PC_FOLLOWER_LIST("")";
+	}
 }

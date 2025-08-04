@@ -27,6 +27,9 @@ namespace Melia.Zone.World
 		// Unique handles for pads? Potentially part of the normal handle pool.
 		private int _padHandles = 0;
 
+		// Unique handles for skills
+		private int _skillHandles = 0;
+
 		private int _genTypes = 1_000_000;
 
 		private readonly Dictionary<int, Map> _mapsId = new();
@@ -93,6 +96,15 @@ namespace Melia.Zone.World
 		public int CreatePadHandle()
 		{
 			return Interlocked.Increment(ref _padHandles);
+		}
+
+		/// <summary>
+		/// Returns a new handle to be used for a casted Skill.
+		/// </summary>
+		/// <returns></returns>
+		public int CreateSkillHandle()
+		{
+			return Interlocked.Increment(ref _skillHandles);
 		}
 
 		/// <summary>

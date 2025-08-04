@@ -7,7 +7,6 @@ using Melia.Zone.Buffs;
 using Melia.Zone.Network;
 using Melia.Zone.Skills;
 using Melia.Zone.Skills.Combat;
-using Melia.Zone.Skills.Handlers.Wizards.Wizard;
 using Melia.Zone.World.Actors.Characters;
 using Melia.Zone.World.Actors.Characters.Components;
 using Melia.Zone.World.Actors.CombatEntities.Components;
@@ -142,6 +141,12 @@ namespace Melia.Zone.World.Actors
 		/// <param name="hpAmount"></param>
 		/// <param name="spAmount"></param>
 		void Heal(float hpAmount, float spAmount);
+
+		/// <summary>
+		/// Kills an entity
+		/// </summary>
+		/// <param name="killer"></param>
+		void Kill(ICombatEntity killer);
 	}
 
 	/// <summary>
@@ -712,5 +717,16 @@ namespace Melia.Zone.World.Actors
 		/// <returns></returns>
 		public static bool IsStateActive(this ICombatEntity entity, string stateType)
 			=> entity.Components.Get<StateLockComponent>()?.IsStateActive(stateType) ?? false;
+
+		/// <summary>
+		/// Attach the entity to an object.
+		/// </summary>
+		public static void AttachToObject(this IActor actor, ICombatEntity attachToActor, string nodeName, string targetNodeName, float attachSec = 1, float randomAttachRange = 0, bool holdAi = false, float f1 = 0, string attachAnim = "None")
+		{
+			if (attachToActor != null && attachToActor.Components.TryGet<AiComponent>(out var aiComponent))
+				aiComponent.Script.Suspended = holdAi;
+
+			Send.ZC_ATTACH_TO_OBJ(actor, attachToActor, nodeName, targetNodeName, attachSec, randomAttachRange, f1, attachAnimation: attachAnim);
+		}
 	}
 }

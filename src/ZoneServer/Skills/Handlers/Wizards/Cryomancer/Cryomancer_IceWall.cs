@@ -154,6 +154,8 @@ namespace Melia.Zone.Skills.Handlers.Wizards.Cryomancer
 			iceWallEntity.FromGround = true;
 			iceWallEntity.Direction = direction;
 
+			iceWallEntity.Components.Add(new ControllableMovementComponent(iceWallEntity, caster));
+
 			caster.Map.AddMonster(iceWallEntity);
 			Send.ZC_NORMAL.Skill_13E(iceWallEntity, true);
 

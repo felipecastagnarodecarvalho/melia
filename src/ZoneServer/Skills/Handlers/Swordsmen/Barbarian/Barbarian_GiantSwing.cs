@@ -95,7 +95,7 @@ namespace Melia.Zone.Skills.Handlers.Swordsmen.Barbarian
 			target.AddState(StateType.Stunned);
 
 			Send.ZC_NORMAL.PlayEffect(target, "F_hit_bad", 0.7f);
-			Send.ZC_ATTACH_TO_OBJ(target, caster, "Bone_chain13", "ChainTest", TimeSpan.Zero, 100, null, 0, 0, 0);
+			Send.ZC_ATTACH_TO_OBJ(target, caster, "Bone_chain13", "ChainTest", 0, 100);
 
 			await Task.Delay(rotateDelay);
 
@@ -113,7 +113,7 @@ namespace Melia.Zone.Skills.Handlers.Swordsmen.Barbarian
 			caster.TurnTowards(chainDirection);
 			Send.ZC_NORMAL.SkillCancelCancel(caster, skill.Id);
 
-			Send.ZC_ATTACH_TO_OBJ(target, null, null, null, TimeSpan.Zero, 0, null, 0, 0, 0);
+			Send.ZC_ATTACH_TO_OBJ(target, null, null, null, 0, 0);
 			Send.ZC_NORMAL.ClearEffects(target);
 
 			target.RemoveState(StateType.Stunned);

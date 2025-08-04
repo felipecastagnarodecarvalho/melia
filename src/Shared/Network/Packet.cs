@@ -42,7 +42,7 @@ namespace Melia.Shared.Network
 			// all client packets at some point.
 			// Social server packets don't have the extra bin
 			// so we can skip reading it.
-			if (this.Op < Network.Op.CS_LOGIN)
+			if (this.Op < Network.Op.CS_LOGIN && this.Op != Network.Op.CZ_OBJECT_MOVE)
 				this.GetBin(12);
 
 			_bodyStart = _buffer.Index;

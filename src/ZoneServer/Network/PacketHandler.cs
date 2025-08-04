@@ -3236,29 +3236,29 @@ namespace Melia.Zone.Network
 		[PacketHandler(Op.CZ_OBJECT_MOVE)]
 		public void CZ_OBJECT_MOVE(IZoneConnection conn, Packet packet)
 		{
-			var junkHandle = packet.GetInt();
-			var junkAttachToHandle = packet.GetInt();
-			var junkPacketString = packet.GetInt();
-			var objectHandle = packet.GetInt();
+			var handle = packet.GetInt();
+			var attachToHandle = packet.GetInt();
+			var packetString1 = packet.GetInt();
+			var handleAttachedTo = packet.GetInt();
 			var position = packet.GetPosition();
 
 			var character = conn.SelectedCharacter;
 
-			if (!character.Map.TryGetActor(objectHandle, out var actor))
+			if (!character.Map.TryGetActor(handleAttachedTo, out var actor))
 			{
-				Log.Warning("CZ_CONTROL_OBJECT_ROTATE: User '{0}' tried to control the rotation of an object that doesn't exist (Handle:{1}).", conn.Account.Name, objectHandle);
+				Log.Warning("CZ_OBJECT_MOVE: User '{0}' tried to control the movement of an object that doesn't exist (Handle:{1}).", conn.Account.Name, handleAttachedTo);
 				return;
 			}
 
 			if (actor is not Mob actorMob || !actorMob.Components.TryGet<ControllableMovementComponent>(out var controllableMovementComponent))
 			{
-				Log.Warning("CZ_CONTROL_OBJECT_ROTATE: User '{0}' tried to control the rotation of an object that is not a mob (Handle:{1}).", conn.Account.Name, objectHandle);
+				Log.Warning("CZ_OBJECT_MOVE: User '{0}' tried to control the movement of an object that is not a mob (Handle:{1}).", conn.Account.Name, handleAttachedTo);
 				return;
 			}
 
 			if (controllableMovementComponent.ParentOwner.Handle != character.Handle)
 			{
-				Log.Warning("CZ_CONTROL_OBJECT_ROTATE: User '{0}' tried to control the rotation of an object that he is not the owner (Handle:{1}).", conn.Account.Name, objectHandle);
+				Log.Warning("CZ_OBJECT_MOVE: User '{0}' tried to control the movement of an object that he is not the owner (Handle:{1}).", conn.Account.Name, handleAttachedTo);
 				return;
 			}
 

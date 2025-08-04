@@ -75,7 +75,7 @@ namespace Melia.Zone.World.Actors.Monsters
 		/// <summary>
 		/// Gets or sets what kind of "monster" the mob is.
 		/// </summary>
-		public MonsterType MonsterType { get; set; }
+		public MonsterType MonsterType { get; set; } = MonsterType.Mob;
 
 		/// <summary>
 		/// Gets or sets monster's name, leave empty for default.
@@ -329,7 +329,7 @@ namespace Melia.Zone.World.Actors.Monsters
 			if (topAttacker != null)
 				beneficiary = topAttacker;
 
-			if (beneficiary.Components.Get<AiComponent>()?.Script.GetMaster() is Character master)
+			if (beneficiary?.Components.Get<AiComponent>()?.Script.GetMaster() is Character master)
 				beneficiary = master;
 
 			return beneficiary as Character;

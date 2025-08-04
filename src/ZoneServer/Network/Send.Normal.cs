@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Numerics;
 using Melia.Shared.Game.Const;
 using Melia.Shared.Network;
 using Melia.Shared.Network.Helpers;
@@ -56,6 +57,37 @@ namespace Melia.Zone.Network
 			/// <summary>
 			/// Attaches effect to actor on client.
 			/// </summary>
+			/// <param name="actor"></param>
+			/// <param name="animationName"></param>
+			/// <param name="scale"></param>
+			/// <param name="heightOffset">0 - Top, 1 - Mid, 2 - Bot</param>
+			/// <param name="effectRelativeX">Offsets the effect's X position relative to the actor</param>
+			/// <param name="effectRelativeY">Offsets the effect's Y position relative to the actor</param>
+			/// <param name="effectRelativeZ">Offsets the effect's Z position relative to the actor</param>
+			public static void AttachEffect(IActor actor, string animationName, float scale, EffectLocation heightOffset = EffectLocation.Unknown, float effectRelativeX = 0, float effectRelativeY = 0, float effectRelativeZ = 0, byte b1 = 0, byte b2 = 0, byte b3 = 0, byte b4 = 0)
+			{
+				var packet = new Packet(Op.ZC_NORMAL);
+				packet.PutInt(NormalOp.Zone.AttachEffect);
+
+				packet.PutInt(actor.Handle);
+				packet.AddStringId(animationName);
+				packet.PutFloat(scale);
+				packet.PutInt((int)heightOffset);
+				packet.PutFloat(effectRelativeX);
+				packet.PutFloat(effectRelativeY);
+				packet.PutFloat(effectRelativeZ);
+				packet.PutByte(b1);
+				packet.PutByte(b2);
+				packet.PutByte(b3);
+				packet.PutByte(b4);
+				packet.PutEmptyBin(12);
+
+				actor.Map.Broadcast(packet);
+			}
+
+			/// <summary>
+			/// Attaches effect to actor on client.
+			/// </summary>
 			/// <param name="conn"></param>
 			/// <param name="actor"></param>
 			/// <param name="effectName"></param>
@@ -108,6 +140,32 @@ namespace Melia.Zone.Network
 				packet.PutFloat(scale);
 				packet.AddStringId(effectName);
 				packet.PutInt(0);
+
+				actor.Map.Broadcast(packet, actor);
+			}
+
+			/// <summary>
+			/// Plays an animation effect.
+			/// </summary>
+			/// <param name="actor"></param>
+			/// <param name="b1"></param>
+			/// <param name="heightOffset"></param>
+			/// <param name="b2"></param>
+			/// <param name="scale"></param>
+			/// <param name="animationName"></param>
+			public static void PlayEffect(IActor actor, byte b1 = 1, EffectLocation heightOffset = EffectLocation.Bottom, byte b2 = 1, float scale = 1, string animationName = "F_pc_class_change", float f1 = 0, int associatedHandle = 0)
+			{
+				var packet = new Packet(Op.ZC_NORMAL);
+				packet.PutInt(NormalOp.Zone.PlayEffect);
+
+				packet.PutInt(actor.Handle);
+				packet.PutByte(b1);
+				packet.PutInt((int)heightOffset);
+				packet.PutByte(b2);
+				packet.PutFloat(scale);
+				packet.AddStringId(animationName);
+				packet.PutFloat(f1);
+				packet.PutInt(associatedHandle);
 
 				actor.Map.Broadcast(packet, actor);
 			}
@@ -1437,7 +1495,7 @@ namespace Melia.Zone.Network
 			/// <param name="character"></param>
 			/// <param name="packetString"></param>
 			/// <param name="skillId></param>
-			public static void DisableRegularSkills(Character character, string packetString, SkillId skillId)
+			public static void DisableRegularSkills(Character character, string packetString, SkillId skillId, bool isUsable)
 			{
 				var packet = new Packet(Op.ZC_NORMAL);
 				packet.PutInt(NormalOp.Zone.DisableRegularSkills);
@@ -1445,6 +1503,7 @@ namespace Melia.Zone.Network
 				packet.PutInt(character.Handle);
 				packet.PutLpString(packetString);
 				packet.PutInt((int)skillId);
+				packet.PutByte(isUsable);
 
 				character.Connection.Send(packet);
 			}
@@ -1464,28 +1523,31 @@ namespace Melia.Zone.Network
 
 				character.Connection.Send(packet);
 			}
-			
 
 			/// <summary>
-			/// Update Entity Scale.
+			/// Set an actor's scale.
 			/// </summary>
-			/// <param name="target"></param>
-			/// <param name="unknowInt"></param>
-			/// <param name="scale"></param>
-			/// <param name="unknowBoolean"></param>
-			/// <param name="unknowShort"></param>
-			public static void UpdateScale(ICombatEntity target, int unknowInt, float scale, bool unknowBoolean, short unknowShort)
+			/// <param name="actor"></param>
+			/// <param name="animationName"></param>
+			/// <param name="animationScale"></param>
+			/// <param name="animationSpeed"></param>
+			/// <param name="overwriteScale"></param>
+			/// <param name="b2"></param>
+			/// <param name="b3"></param>
+			public static void SetScale(IActor actor, string animationName, float animationScale, float animationSpeed = 0, byte overwriteScale = 0, byte b2 = 0, byte b3 = 0)
 			{
 				var packet = new Packet(Op.ZC_NORMAL);
-				packet.PutInt(NormalOp.Zone.UpdateScale);
+				packet.PutInt(NormalOp.Zone.SetScale);
 
-				packet.PutInt(target.Handle);
-				packet.PutInt(unknowInt);
-				packet.PutFloat(scale);
-				packet.PutByte(unknowBoolean);
-				packet.PutShort(unknowShort);
+				packet.PutInt(actor.Handle);
+				packet.AddStringId(animationName);
+				packet.PutFloat(animationScale);
+				packet.PutFloat(animationSpeed);
+				packet.PutByte(overwriteScale);
+				packet.PutByte(b2);
+				packet.PutByte(b3);
 
-				target.Map.Broadcast(packet);
+				actor.Map.Broadcast(packet, actor);
 			}
 
 			/// <summary>
@@ -1493,65 +1555,42 @@ namespace Melia.Zone.Network
 			/// It's used on Cryomancer Snow Rolling skill.
 			/// </summary>
 			/// <param name="target"></param>
-			/// <param name="unknowFloat"></param>
-			public static void Skill_B7(ICombatEntity target, float unknowFloat)
+			/// <param name="yOffset"></param>
+			public static void SetHeight(ICombatEntity target, float yOffset)
 			{
 				var packet = new Packet(Op.ZC_NORMAL);
-				packet.PutInt(NormalOp.Zone.Skill_B7);
+				packet.PutInt(NormalOp.Zone.OffsetY);
 
 				packet.PutInt(target.Handle);
-				packet.PutFloat(unknowFloat);
+				packet.PutFloat(yOffset);
 				
 				target.Map.Broadcast(packet);
 			}
 
 			/// <summary>
-			/// The actual purpose is unknow, seems to be used for height entity object update.
-			/// It's used on Cryomancer Snow Rolling skill.
+			/// Buff from Riding an entity
 			/// </summary>
-			/// <param name="caster"></param>
-			/// <param name="target"></param>
-			/// <param name="effectName"></param>
+			/// <param name="owner"></param>
+			/// <param name="subActor"></param>
 			/// <param name="b1"></param>
 			/// <param name="b2"></param>
 			/// <param name="b3"></param>
+			/// <param name="packetString"></param>
 			/// <param name="b4"></param>
-			public static void AttachCasterToSnowBall(ICombatEntity caster, ICombatEntity target, string effectName, bool b1, bool b2, bool b3, bool b4)
+			public static void RideEntity(IActor owner, IActor subActor, byte b1, byte b2, byte b3, string packetString, byte b4)
 			{
 				var packet = new Packet(Op.ZC_NORMAL);
-				packet.PutInt(NormalOp.Zone.AttachCasterToSnowBall);
+				packet.PutInt(NormalOp.Zone.RideEntity);
 
-				packet.PutInt(caster.Handle);
-				packet.PutInt(target.Handle);
+				packet.PutInt(owner.Handle);
+				packet.PutInt(subActor.Handle);
 				packet.PutByte(b1);
 				packet.PutByte(b2);
 				packet.PutByte(b3);
-				packet.AddStringId(effectName);
+				packet.AddStringId(packetString);
 				packet.PutByte(b4);
 
-				target.Map.Broadcast(packet);
-			}
-
-			/// <summary>
-			/// The actual purpose is unknow.
-			/// It's used on Cryomancer Snow Rolling skill.
-			/// </summary>
-			/// <param name="target"></param>
-			/// <param name="effectName"></param>
-			public static void Skill_26(ICombatEntity target, string effectName)
-			{
-				var packet = new Packet(Op.ZC_NORMAL);
-				packet.PutInt(NormalOp.Zone.Skill_26);
-
-				packet.PutInt(target.Handle);
-				packet.AddStringId(effectName);
-				packet.PutInt(2);
-				packet.PutInt(4);
-				packet.PutByte(0);
-				packet.PutByte(3);
-				packet.PutFloat(1);
-
-				target.Map.Broadcast(packet);
+				subActor.Map.Broadcast(packet);
 			}
 
 			/// <summary>
@@ -1560,10 +1599,10 @@ namespace Melia.Zone.Network
 			/// </summary>
 			/// <param name="target"></param>
 			/// <param name="unknowFloat"></param>
-			public static void Skill_99(ICombatEntity target, float unknowFloat)
+			public static void DelayEnterWorld(ICombatEntity target, float unknowFloat = 0)
 			{
 				var packet = new Packet(Op.ZC_NORMAL);
-				packet.PutInt(NormalOp.Zone.Skill_99);
+				packet.PutInt(NormalOp.Zone.DelayEnterWorld);
 
 				packet.PutInt(target.Handle);
 				packet.PutFloat(unknowFloat);
@@ -1576,17 +1615,43 @@ namespace Melia.Zone.Network
 			/// It's used on Cryomancer Snow Rolling skill.
 			/// </summary>
 			/// <param name="target"></param>
-			/// <param name="unknowBoolean"></param>
-			public static void Skill_C8(ICombatEntity target, bool unknowBoolean)
+			/// <param name="b1"></param>
+			public static void EnterDelayedActor(ICombatEntity target, byte b1 = 1)
 			{
 				var packet = new Packet(Op.ZC_NORMAL);
 				packet.PutInt(NormalOp.Zone.Skill_C8);
 
 				packet.PutInt(target.Handle);
-				packet.PutByte(unknowBoolean);
+				packet.PutByte(b1);
 
 				target.Map.Broadcast(packet);
-			}			
+			}
+
+			/// <summary>
+			/// Call a lua func
+			/// </summary>
+			/// <param name="actor"></param>
+			/// <param name="luaFuncPacketString"></param>
+			/// <param name="i1"></param>
+			/// <param name="i2"></param>
+			/// <param name="b1"></param>
+			/// <param name="b2"></param>
+			/// <param name="f1"></param>
+			public static void Skill_CallLuaFunc(IActor actor, string luaFuncPacketString, int i1, int i2, byte b1, byte b2, float f1)
+			{
+				var packet = new Packet(Op.ZC_NORMAL);
+				packet.PutInt(NormalOp.Zone.Skill_CallLuaFunc);
+
+				packet.PutInt(actor.Handle);
+				packet.AddStringId(luaFuncPacketString);
+				packet.PutInt(i1);
+				packet.PutInt(i2);
+				packet.PutByte(b1);
+				packet.PutByte(b2);
+				packet.PutFloat(f1);
+
+				actor.Map.Broadcast(packet, actor);
+			}
 		}
 	}
 }

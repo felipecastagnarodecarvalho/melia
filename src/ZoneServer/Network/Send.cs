@@ -2255,6 +2255,18 @@ namespace Melia.Zone.Network
 		/// <param name="position1"></param>
 		/// <param name="position2"></param>
 		public static void ZC_SKILL_READY(ICombatEntity entity, Skill skill, Position position1, Position position2)
+			=> ZC_SKILL_READY(entity, skill, 0, position1, position2);
+
+		/// <summary>
+		/// Notifies the client that the skill is ready? Exact purpose
+		/// currently unknown.
+		/// </summary>
+		/// <param name="entity"></param>
+		/// <param name="skill"></param>
+		/// <param name="i1"></param>
+		/// <param name="position1"></param>
+		/// <param name="position2"></param>
+		public static void ZC_SKILL_READY(ICombatEntity entity, Skill skill, int i1, Position position1, Position position2)
 		{
 			var packet = new Packet(Op.ZC_SKILL_READY);
 
@@ -2262,7 +2274,7 @@ namespace Melia.Zone.Network
 			packet.PutInt((int)skill.Id);
 			packet.PutFloat(1);
 			packet.PutFloat(1);
-			packet.PutInt(1);
+			packet.PutInt(i1);
 			packet.PutPosition(position1);
 			packet.PutPosition(position2);
 
@@ -2527,6 +2539,20 @@ namespace Melia.Zone.Network
 			packet.PutInt((int)faction);
 
 			conn.Send(packet);
+		}
+
+		/// <summary>
+		/// Updates the actor's faction on the client.
+		/// </summary>
+		/// <param name="actor"></param>
+		public static void ZC_FACTION(ICombatEntity entity)
+		{
+			var packet = new Packet(Op.ZC_FACTION);
+
+			packet.PutInt(entity.Handle);
+			packet.PutInt((int)entity.Faction);
+
+			entity.Map.Broadcast(packet);
 		}
 
 		/// <summary>
@@ -4470,34 +4496,33 @@ namespace Melia.Zone.Network
 			entity.Map.Broadcast(packet, entity);
 		}
 
-		/// <summary>
-		/// Attaches actor to a given node on the other actor's model on clients
-		/// in range of actor.
+		/// Attach to Object
 		/// </summary>
-		/// <param name="actor">Actor to attach to another actor.</param>
-		/// <param name="attachTo">Other actor to attach to. Use null to unset attachment.</param>
+		/// <param name="actor"></param>
+		/// <param name="attachToEntity"></param>
 		/// <param name="nodeName"></param>
-		/// <param name="unkStr1"></param>
-		/// <param name="duration"></param>
-		/// <param name="distance"></param>
-		/// <param name="packetString2"></param>
+		/// <param name="targetNodeName"></param>
+		/// <param name="attachSeconds"></param>
+		/// <param name="l1"></param>
+		/// <param name="l2"></param>
+		/// <param name="attachAnimation"></param>
 		/// <param name="b1"></param>
-		/// <param name="b2"></param>
-		/// <param name="b3"></param>
-		public static void ZC_ATTACH_TO_OBJ(IActor actor, IActor attachTo, string nodeName, string unkStr1, TimeSpan duration, float distance, string packetString2, byte b1, byte b2, byte b3)
+		public static void ZC_ATTACH_TO_OBJ(IActor actor, IActor attachToEntity, string nodeName,
+			string targetNodeName, float attachSeconds = 0, float f1 = 0, float f2 = 0, float f3 = 0,
+			float distance = 0, string attachAnimation = "None", byte b1 = 0, byte b2 = 0, byte b3 = 0)
 		{
 			var packet = new Packet(Op.ZC_ATTACH_TO_OBJ);
 
 			packet.PutInt(actor.Handle);
-			packet.PutInt(attachTo?.Handle ?? 0);
+			packet.PutInt(attachToEntity?.Handle ?? 0);
 			packet.AddStringId(nodeName);
-			packet.AddStringId(unkStr1);
-			packet.PutFloat((float)duration.TotalSeconds);
+			packet.AddStringId(targetNodeName);
+			packet.PutFloat(attachSeconds);
 			packet.PutFloat(0);
 			packet.PutFloat(0);
 			packet.PutFloat(0);
 			packet.PutFloat(distance);
-			packet.AddStringId(packetString2);
+			packet.AddStringId(attachAnimation);
 			packet.PutByte(b1);
 			packet.PutByte(b2);
 			packet.PutByte(b3);
@@ -4552,20 +4577,74 @@ namespace Melia.Zone.Network
 		}
 
 		/// <summary>
-		/// Select an animation for an actor for nearby clients.
+		/// Standing Animation ?
 		/// </summary>
 		/// <param name="actor"></param>
 		/// <param name="animationId"></param>
-		public static void ZC_STD_ANIM(IActor actor, int animationId)
+		public static void ZC_STD_ANIM(IActor actor, FixedAnimation animationId)
 		{
 			var packet = new Packet(Op.ZC_STD_ANIM);
 
-			// Wrong animation Id
-			if (animationId < 0 || animationId > 255)
-				animationId = 0;
-
 			packet.PutInt(actor.Handle);
 			packet.PutByte((byte)animationId);
+
+			actor.Map.Broadcast(packet);
+		}
+
+		/// <summary>
+		/// Move Animation ?
+		/// </summary>
+		/// <param name="entity"></param>
+		/// <param name="animationId"></param>
+		/// <param name="b2"></param>
+		public static void ZC_MOVE_ANIM(IActor entity, FixedAnimation animationId, byte b2)
+		{
+			var packet = new Packet(Op.ZC_MOVE_ANIM);
+
+			packet.PutInt(entity.Handle);
+			packet.PutByte((byte)animationId);
+			packet.PutByte(b2);
+
+			entity.Map.Broadcast(packet);
+		}
+
+		/// <summary>
+		/// Ground Effect for Skills
+		/// </summary>
+		/// <remarks>
+		/// PlayGroundEffect(caster, eft, scl, x, y, z, lifeTime, key, radAngle, delayTime)
+		/// </remarks>
+		/// <param name="actor"></param>
+		/// <param name="targetPosition"></param>
+		/// <param name="effectName"></param>
+		/// <param name="scale"></param>
+		/// <param name="duration"></param>
+		/// <param name="delay"></param>
+		/// <param name="angle"></param>
+		/// <param name="s1"></param>
+		/// <param name="s2"></param>
+		/// <param name="f1"></param>
+		/// <param name="b1"></param>
+		/// <param name="b2"></param>
+		public static void ZC_GROUND_EFFECT(IActor actor, Position targetPosition, string effectName,
+			float scale = 1, float duration = 0, float delay = 0, float angle = 0, short s1 = 0, short s2 = 0, float f1 = 0, byte b1 = 0, byte b2 = 0)
+		{
+			var packet = new Packet(Op.ZC_GROUND_EFFECT);
+
+			packet.PutInt(actor.Handle);
+			packet.AddStringId(effectName);
+			packet.PutPosition(targetPosition);
+			packet.PutFloat(scale); // 1
+			packet.PutFloat(duration);
+			packet.PutFloat(delay); // 0.2031306
+			packet.PutFloat(angle);
+			packet.PutShort(s1);
+			packet.PutShort(s2);
+			//packet.PutFloat(f5); // 0.1015625
+			packet.PutFloat(f1);
+			packet.PutByte(b1);
+			// Noticed in i370431
+			packet.PutByte(b2);
 
 			actor.Map.Broadcast(packet);
 		}

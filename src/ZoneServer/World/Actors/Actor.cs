@@ -81,6 +81,15 @@ namespace Melia.Zone.World.Actors
 		/// </summary>
 		public Direction Direction { get; set; }
 
+		/// <summary>
+		/// Actor's owner handle
+		/// </summary>
+		public int OwnerHandle { get; set; }
+
+		/// <summary>
+		/// Actor's associated handle
+		/// </summary>
+		public int AssociatedHandle { get; set; }
 
 		/// <summary>
 		/// Attaches an effect to the actor that is displayed alongside it.

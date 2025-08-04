@@ -578,6 +578,18 @@ namespace Melia.Zone.World.Maps
 		}
 
 		/// <summary>
+		/// Returns character by handle via out. Returns false if the
+		/// character wasn't found.
+		/// </summary>
+		/// <param name="handle"></param>
+		/// <returns></returns>
+		public bool TryGetCharacter(int handle, out Character character)
+		{
+			lock (_characters)
+				return _characters.TryGetValue(handle, out character);
+		}
+
+		/// <summary>
 		/// Returns the actor with the given handle via out. Returns false
 		/// if not matching actor was found.
 		/// </summary>

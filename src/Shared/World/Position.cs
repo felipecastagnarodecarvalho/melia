@@ -31,6 +31,17 @@ namespace Melia.Shared.World
 		/// </summary>
 		public static Position Invalid => new(float.NaN, float.NaN, float.NaN);
 
+		public static Position operator +(Position a) => a;
+		public static Position operator -(Position a) => new Position(-a.X, -a.Y, -a.Z);
+		public static Position operator +(Position a, Position b)
+			=> new Position(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
+		public static Position operator -(Position a, Position b)
+			=> new Position(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
+		public static Position operator *(Position a, Position b)
+			=> new Position(a.X * b.X, a.Y * b.Y, a.Z * b.Z);
+		public static Position operator *(Position a, float b)
+			=> new Position(a.X * b, a.Y * b, a.Z * b);
+
 		/// <summary>
 		/// Creates new position from coordinates.
 		/// </summary>
@@ -54,6 +65,12 @@ namespace Melia.Shared.World
 			this.Y = pos.Y;
 			this.Z = pos.Z;
 		}
+
+		/// <summary>
+		/// Returns a new position floored
+		/// </summary>
+		/// <returns></returns>
+		public Position Floor => new Position((int)X, (int)Y, (int)Z);
 
 		/// <summary>
 		/// Returns distance between this and another position in 2D space (X,Z).
